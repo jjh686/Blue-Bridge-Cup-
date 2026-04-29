@@ -1,4 +1,0 @@
-".\Objects\STARTUP.obj",
-".\Objects\main.obj" 
-TO ".\Objects\STC-ISP" 
-PRINT(".\Listings\STC-ISP.m51") RAMSIZE(256) 
