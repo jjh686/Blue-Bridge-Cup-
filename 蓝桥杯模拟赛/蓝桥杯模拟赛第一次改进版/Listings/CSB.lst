@@ -1,0 +1,56 @@
+C51 COMPILER V9.56.0.0   CSB                                                               12/05/2025 23:02:23 PAGE 1   
+
+
+C51 COMPILER V9.56.0.0, COMPILATION OF MODULE CSB
+OBJECT MODULE PLACED IN .\Objects\CSB.obj
+COMPILER INVOKED BY: D:\keil c51v956\C51\BIN\C51.EXE library\device\CSB.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\library\devi
+                    -ce;.\library\system) DEBUG OBJECTEXTEND PRINT(.\Listings\CSB.lst) OBJECT(.\Objects\CSB.obj)
+
+line level    source
+
+   1          #include "CSB.h"
+   2          
+   3          void vSend_Wave()
+   4          {
+   5   1              u8 i;
+   6   1              for(i=0;i<8;i++)
+   7   1              {
+   8   2                      P10=1;
+   9   2                      Delay12us();
+  10   2                      P10=0;
+  11   2                      Delay12us();
+  12   2              }
+  13   1      }
+  14          
+  15          u16 uiDistance_Get()
+  16          {
+  17   1              u16 dist;
+  18   1              vSend_Wave();
+  19   1              TH1=0;TL1=0;
+  20   1              TR1=1;
+  21   1              while((P11==1)&&(TF1==0));
+  22   1              TR1=0;
+  23   1              if(TF1==1)
+  24   1              {
+  25   2                      TF1=0;
+  26   2              }
+  27   1              else
+  28   1              {
+  29   2                      dist=(TH1<<8|TL1)*0.017;
+  30   2              }
+  31   1              return dist;
+  32   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     81    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       3
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

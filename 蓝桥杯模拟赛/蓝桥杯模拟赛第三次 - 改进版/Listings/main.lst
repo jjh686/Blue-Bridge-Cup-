@@ -1,0 +1,294 @@
+C51 COMPILER V9.56.0.0   MAIN                                                              03/15/2026 10:47:14 PAGE 1   
+
+
+C51 COMPILER V9.56.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: D:\keil c51v956\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\library\device;.\library\s
+                    -ystem) DEBUG OBJECTEXTEND PRINT(.\Listings\main.lst) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include "system.h"
+   2          
+   3          // ================= 定义与变量 =================
+   4          // 状态定义
+   5          #define STATE_READY     0  // 准备界面
+   6          #define STATE_SETTING   1  // 设置界面
+   7          #define STATE_GAME      2  // 比赛界面
+   8          #define STATE_RESULT    3  // 结果界面
+   9          
+  10          // 系统变量
+  11          u8 system_state = STATE_READY; // 当前系统状态
+  12          u8 set_time_param = 5;         // 设置的时间参数 (0-99)
+  13          s8 countdown_time = 0;         // 倒计时时间 (有符号，方便判断<0)
+  14          u8 eliminate_id = 0;           // 淘汰选手的编号 (0代表无淘汰/EE)
+  15          u8 light_val = 0;              // 光敏电阻值
+  16          bit is_dark = 0;               // 当前环境是否为暗
+  17          
+  18          // 计时辅助变量
+  19          u16 cnt_1s_timer = 0;          // 1秒计时器
+  20          bit flag_100ms = 0;            // 100ms标志位
+  21          u8 cnt_btn = 0;                // 【修复】新增按键计数变量
+  22          u16 cnt_match_time = 0;        // 兼容你原来的变量定义(若有需要)
+  23          
+  24          // 标志位
+  25          bit flag_all_released = 0;     // 结果界面下，是否所有人都已松手
+  26          
+  27          // ================= 辅助函数 =================
+  28          
+  29          // 将P3口的按键状态转换为选手编号
+  30          u8 Get_Eliminated_Player()
+  31          {
+  32   1          u8 key_state = P3 & 0x0F; // 取P3低四位
+  33   1          
+  34   1          if(key_state == 0x00) return 0; // 都在按下状态
+  35   1          
+  36   1          // 优先级判断
+  37   1          if(key_state & 0x01) return 7; // P30 高 -> S7松开
+  38   1          if(key_state & 0x02) return 6; // P31 高 -> S6松开
+  39   1          if(key_state & 0x04) return 5; // P32 高 -> S5松开
+  40   1          if(key_state & 0x08) return 4; // P33 高 -> S4松开
+  41   1          
+  42   1          return 0;
+  43   1      }
+  44          
+  45          // ================= 核心处理函数 =================
+  46          
+  47          void vSystem_init()
+  48          {
+  49   1          vP2P0_ctrl(0xa0, 0x00); // 关闭蜂鸣器继电器
+  50   1          vP2P0_ctrl(0x80, 0xff); // 关闭LED
+  51   1      }
+  52          
+  53          // 逻辑处理核心
+  54          void vLogic_Process()
+C51 COMPILER V9.56.0.0   MAIN                                                              03/15/2026 10:47:14 PAGE 2   
+
+  55          {
+  56   1          u8 key_val;
+  57   1          u8 player_released;
+  58   1      
+  59   1          // --- 全局光敏检测逻辑 (带迟滞) ---
+  60   1          // 迟滞：>115 确认为亮，<105 确认为暗
+  61   1          if(light_val > 115) is_dark = 0; 
+  62   1          else if(light_val < 105) is_dark = 1;
+  63   1      
+  64   1          // --- 状态机 ---
+  65   1          switch(system_state)
+  66   1          {
+  67   2              case STATE_READY: // 准备界面
+  68   2                  // 1. 环境监测切换
+  69   2                  if(is_dark) {
+  70   3                      system_state = STATE_SETTING;
+  71   3                      break;
+  72   3                  }
+  73   2                  
+  74   2                  // 2. 检测4位选手是否全部按下 (P3低4位全为0)
+  75   2                  if((P3 & 0x0F) == 0x00) 
+  76   2                  {
+  77   3                      countdown_time = set_time_param;
+  78   3                      cnt_1s_timer = 0;
+  79   3                      eliminate_id = 0; // 重置淘汰人
+  80   3                      system_state = STATE_GAME;
+  81   3                  }
+  82   2                  break;
+  83   2      
+  84   2              case STATE_SETTING: // 设置界面
+  85   2                  // 1. 环境监测切换
+  86   2                  if(!is_dark) {
+  87   3                      system_state = STATE_READY;
+  88   3                      break;
+  89   3                  }
+  90   2      
+  91   2                  // 2. 按键调整时间
+  92   2                  key_val = ucBTN_Read(); 
+  93   2                  if(key_val == 6) // S6
+  94   2                  {
+  95   3                      if(set_time_param > 0) set_time_param--;
+  96   3                  }
+  97   2                  if(key_val == 7) // S7
+  98   2                  {
+  99   3                      if(set_time_param < 99) set_time_param++;
+ 100   3                  }
+ 101   2                  break;
+ 102   2      
+ 103   2              case STATE_GAME: // 比赛界面
+ 104   2                  // 1. 犯规检测 (松手检测)
+ 105   2                  player_released = Get_Eliminated_Player();
+ 106   2                  if(player_released != 0)
+ 107   2                  {
+ 108   3                      eliminate_id = player_released; // 记录是谁犯规
+ 109   3                      system_state = STATE_RESULT;   // 立即结束
+ 110   3                  }
+ 111   2                  
+ 112   2                  // 2. 倒计时逻辑 (在定时器中每1000ms减一次)
+ 113   2                  if(countdown_time < 0) 
+ 114   2                  {
+ 115   3                      countdown_time = 0; 
+ 116   3                      eliminate_id = 0;   // 无人淘汰 (EE)
+C51 COMPILER V9.56.0.0   MAIN                                                              03/15/2026 10:47:14 PAGE 3   
+
+ 117   3                      system_state = STATE_RESULT;
+ 118   3                  }
+ 119   2                  break;
+ 120   2      
+ 121   2              case STATE_RESULT: // 结果界面
+ 122   2                  if(flag_all_released == 0)
+ 123   2                  {
+ 124   3                      // 检测是否全部松开
+ 125   3                      if((P3 & 0x0F) == 0x0F)
+ 126   3                      {
+ 127   4                          flag_all_released = 1;
+ 128   4                      }
+ 129   3                  }
+ 130   2                  else
+ 131   2                  {
+ 132   3                      // 检测是否有任意按下
+ 133   3                      if((P3 & 0x0F) != 0x0F)
+ 134   3                      {
+ 135   4                          flag_all_released = 0; 
+ 136   4                          system_state = STATE_READY;
+ 137   4                      }
+ 138   3                  }
+ 139   2                  break;
+ 140   2          }
+ 141   1      }
+ 142          
+ 143          // 显示处理
+ 144          void vDisplay_Process()
+ 145          {
+ 146   1          u8 led_data = 0xFF; 
+ 147   1          u8 i; 
+ 148   1          
+ 149   1          // 【关键步骤1】定义一个静态变量，用来记住“上一次”LED是什么样子的
+ 150   1          // static 意味着这个变量在函数退出后数值不会丢失
+ 151   1          static u8 led_data_old = 0xAA; // 给个初始值，确保第一次能刷新
+ 152   1      
+ 153   1          // --- LED 控制逻辑 (保持不变) ---
+ 154   1          switch(system_state)
+ 155   1          {
+ 156   2              case STATE_READY:   led_data &= ~0x01; break; // L1亮
+ 157   2              case STATE_SETTING: led_data &= ~0x02; break; // L2亮
+ 158   2              case STATE_GAME:    led_data &= ~0x04; break; // L3亮
+ 159   2              case STATE_RESULT:  led_data &= ~0x08; break; // L4亮
+ 160   2          }
+ 161   1      
+ 162   1          // 【关键步骤2】只有当新状态和旧状态不一样时，才操作硬件！
+ 163   1          if(led_data != led_data_old)
+ 164   1          {
+ 165   2              vP2P0_ctrl(0x80, led_data); // 操作硬件
+ 166   2              led_data_old = led_data;    // 更新旧状态，以此为基准
+ 167   2          }
+ 168   1      
+ 169   1          // --- 数码管显示 (保持不变) ---
+ 170   1          for(i=0; i<8; i++) smg_buf[i] = 0x00; 
+ 171   1      
+ 172   1          switch(system_state)
+ 173   1          {
+ 174   2              // ... (数码管部分的代码不用动) ...
+ 175   2              case STATE_READY:
+ 176   2                  smg_buf[0] = 0x76; smg_buf[1] = 0x79; smg_buf[2] = 0x38; 
+ 177   2                  smg_buf[3] = 0x38; smg_buf[4] = 0x3F; 
+ 178   2                  break;
+C51 COMPILER V9.56.0.0   MAIN                                                              03/15/2026 10:47:14 PAGE 4   
+
+ 179   2              case STATE_SETTING:
+ 180   2                  smg_buf[0] = 0x3E; 
+ 181   2                  if(set_time_param >= 10) smg_buf[6] = smg_code[set_time_param / 10];
+ 182   2                  else smg_buf[6] = smg_code[0]; 
+ 183   2                  smg_buf[7] = smg_code[set_time_param % 10];
+ 184   2                  break;
+ 185   2              case STATE_GAME:
+ 186   2                  smg_buf[0] = 0x77; 
+ 187   2                  if(countdown_time >= 0) {
+ 188   3                      if(countdown_time >= 10) smg_buf[6] = smg_code[countdown_time / 10];
+ 189   3                      else smg_buf[6] = smg_code[0];
+ 190   3                      smg_buf[7] = smg_code[countdown_time % 10];
+ 191   3                  }
+ 192   2                  break;
+ 193   2              case STATE_RESULT:
+ 194   2                  smg_buf[0] = 0x79; 
+ 195   2                  if(eliminate_id == 0) {
+ 196   3                      smg_buf[6] = 0x79; smg_buf[7] = 0x79; 
+ 197   3                  } else {
+ 198   3                      smg_buf[6] = 0x00; smg_buf[7] = smg_code[eliminate_id]; 
+ 199   3                  }
+ 200   2                  break;
+ 201   2          }
+ 202   1      }
+ 203          
+ 204          void vADC_Process()
+ 205          {
+ 206   1          if(flag_100ms)
+ 207   1          {
+ 208   2              flag_100ms = 0;
+ 209   2              light_val = ucADC_Read(0x41); 
+ 210   2          }
+ 211   1      }
+ 212          
+ 213          void main()
+ 214          {
+ 215   1          vSystem_init();
+ 216   1          Timer2Init(); 
+ 217   1          EA = 1;       
+ 218   1      
+ 219   1          while(1)
+ 220   1          {
+ 221   2              vLogic_Process();   
+ 222   2              vDisplay_Process(); 
+ 223   2              vADC_Process();     
+ 224   2          }
+ 225   1      }
+ 226          
+ 227          // ================= 中断服务函数 =================
+ 228          
+ 229          void t2_init() interrupt 12
+ 230          {
+ 231   1          static u8 tick_10ms = 0;
+ 232   1          static u16 tick_1000ms = 0;
+ 233   1          
+ 234   1          // 数码管扫描
+ 235   1          vSmg_Display(); 
+ 236   1          
+ 237   1          // 按键计数器
+ 238   1          cnt_btn++; 
+ 239   1          
+ 240   1          // 100ms 计时
+C51 COMPILER V9.56.0.0   MAIN                                                              03/15/2026 10:47:14 PAGE 5   
+
+ 241   1          tick_10ms++;
+ 242   1          if(tick_10ms >= 100) // 假设中断是1ms一次
+ 243   1          {
+ 244   2              tick_10ms = 0;
+ 245   2              flag_100ms = 1;
+ 246   2          }
+ 247   1      
+ 248   1          // 1000ms 倒计时逻辑
+ 249   1          if(system_state == STATE_GAME)
+ 250   1          {
+ 251   2              tick_1000ms++;
+ 252   2              if(tick_1000ms >= 1000)
+ 253   2              {
+ 254   3                  tick_1000ms = 0;
+ 255   3                  countdown_time--; 
+ 256   3              }
+ 257   2          }
+ 258   1          else
+ 259   1          {
+ 260   2              tick_1000ms = 0; 
+ 261   2          }
+ 262   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    568    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     14       1
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      3    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

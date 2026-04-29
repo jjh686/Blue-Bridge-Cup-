@@ -1,0 +1,465 @@
+BL51 BANKED LINKER/LOCATER V6.22                                                        11/09/2025  20:39:05  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22, INVOKED BY:
+D:\KEIL C51V956\C51\BIN\BL51.EXE .\Objects\STARTUP.obj, .\Objects\main.obj, .\Objects\kbd.obj, .\Objects\smg.obj, .\Obje
+>> cts\p2p0.obj, .\Objects\Timer.obj TO .\Objects\A PRINT (.\Listings\A.m51) RAMSIZE (256)
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\STARTUP.obj (?C_STARTUP)
+  .\Objects\main.obj (MAIN)
+  .\Objects\kbd.obj (KBD)
+  .\Objects\smg.obj (SMG)
+  .\Objects\p2p0.obj (P2P0)
+  .\Objects\Timer.obj (TIMER)
+  D:\KEIL C51V956\C51\LIB\C51S.LIB (?C_INIT)
+  D:\KEIL C51V956\C51\LIB\C51S.LIB (?C?UIDIV)
+
+
+LINK MAP OF MODULE:  .\Objects\A (?C_STARTUP)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            DATA    0008H     0013H     UNIT         ?DT?SMG
+            DATA    001BH     0008H     UNIT         ?DT?MAIN
+            DATA    0023H     0001H     UNIT         ?DT?KBD
+            IDATA   0024H     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+            CODE    0003H     0055H     UNIT         ?C?LIB_CODE
+                    0058H     000BH                  *** GAP ***
+            CODE    0063H     0003H     ABSOLUTE     
+            CODE    0066H     008CH     UNIT         ?C_C51STARTUP
+            CODE    00F2H     004FH     UNIT         ?PR?VBTN_PROCESS?MAIN
+            CODE    0141H     004BH     UNIT         ?PR?VBTN_NUMBER_PROCESS?MAIN
+            CODE    018CH     003DH     UNIT         ?PR?T2INT?MAIN
+            CODE    01C9H     003CH     UNIT         ?PR?VSMG_PROCESS?MAIN
+            CODE    0205H     0030H     UNIT         ?PR?UCBTN_READ_STATE?KBD
+            CODE    0235H     002FH     UNIT         ?PR?VSMG_DISP?SMG
+            CODE    0264H     0028H     UNIT         ?PR?UCBTN_KEYIO_STATE?KBD
+            CODE    028CH     0015H     UNIT         ?PR?VSYSTEM_INIT?MAIN
+            CODE    02A1H     0012H     UNIT         ?PR?VTIMER2_INIT?TIMER
+            CODE    02B3H     0011H     UNIT         ?PR?MAIN?MAIN
+            CODE    02C4H     0010H     UNIT         ?C_INITSEG
+            CODE    02D4H     000FH     UNIT         ?PR?DELAY1000MS?MAIN
+            CODE    02E3H     000DH     UNIT         ?PR?_VP2P0_CTRL?P2P0
+
+
+
+OVERLAY MAP OF MODULE:   .\Objects\A (?C_STARTUP)
+
+
+SEGMENT
+BL51 BANKED LINKER/LOCATER V6.22                                                      11/09/2025  20:39:05  PAGE 2
+
+
+  +--> CALLED SEGMENT
+---------------------
+?C_C51STARTUP
+  +--> ?PR?MAIN?MAIN
+  +--> ?C_INITSEG
+
+?PR?MAIN?MAIN
+  +--> ?PR?VSYSTEM_INIT?MAIN
+  +--> ?PR?VTIMER2_INIT?TIMER
+  +--> ?PR?VSMG_PROCESS?MAIN
+  +--> ?PR?VBTN_PROCESS?MAIN
+  +--> ?PR?VBTN_NUMBER_PROCESS?MAIN
+
+?PR?VSYSTEM_INIT?MAIN
+  +--> ?PR?_VP2P0_CTRL?P2P0
+
+?PR?VBTN_PROCESS?MAIN
+  +--> ?PR?UCBTN_READ_STATE?KBD
+  +--> ?PR?UCBTN_KEYIO_STATE?KBD
+  +--> ?PR?DELAY1000MS?MAIN
+
+?PR?UCBTN_READ_STATE?KBD
+  +--> ?PR?UCBTN_KEYIO_STATE?KBD
+
+*** NEW ROOT ***************************************************
+
+?PR?T2INT?MAIN
+  +--> ?PR?VSMG_DISP?SMG
+
+?PR?VSMG_DISP?SMG
+  +--> ?PR?_VP2P0_CTRL?P2P0
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\A (?C_STARTUP)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        ?C_STARTUP
+  C:0066H         SEGMENT       ?C_C51STARTUP
+  I:0024H         SEGMENT       ?STACK
+  C:0000H         PUBLIC        ?C_STARTUP
+  D:00E0H         SYMBOL        ACC
+  D:00F0H         SYMBOL        B
+  D:0083H         SYMBOL        DPH
+  D:0082H         SYMBOL        DPL
+  N:0000H         SYMBOL        IBPSTACK
+  N:0100H         SYMBOL        IBPSTACKTOP
+  N:0080H         SYMBOL        IDATALEN
+  C:0069H         SYMBOL        IDATALOOP
+  N:0000H         SYMBOL        PBPSTACK
+  N:0100H         SYMBOL        PBPSTACKTOP
+  N:0000H         SYMBOL        PDATALEN
+  N:0000H         SYMBOL        PDATASTART
+  N:0000H         SYMBOL        PPAGE
+  N:0000H         SYMBOL        PPAGEENABLE
+BL51 BANKED LINKER/LOCATER V6.22                                                      11/09/2025  20:39:05  PAGE 3
+
+
+  D:00A0H         SYMBOL        PPAGE_SFR
+  D:0081H         SYMBOL        SP
+  C:0066H         SYMBOL        STARTUP1
+  N:0000H         SYMBOL        XBPSTACK
+  N:0000H         SYMBOL        XBPSTACKTOP
+  N:0000H         SYMBOL        XDATALEN
+  N:0000H         SYMBOL        XDATASTART
+  C:0000H         LINE#         126
+  C:0066H         LINE#         133
+  C:0068H         LINE#         134
+  C:0069H         LINE#         135
+  C:006AH         LINE#         136
+  C:006CH         LINE#         185
+  C:006FH         LINE#         196
+  -------         ENDMOD        ?C_STARTUP
+
+  -------         MODULE        MAIN
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0080H         PUBLIC        P0
+  D:0090H         PUBLIC        P1
+  D:001CH         PUBLIC        key_val_2
+  D:00A0H         PUBLIC        P2
+  D:00B0H         PUBLIC        P3
+  D:00C0H         PUBLIC        P4
+  D:00C8H         PUBLIC        P5
+  D:00E8H         PUBLIC        P6
+  D:00F8H         PUBLIC        P7
+  D:00A8H         PUBLIC        IE
+  C:02D4H         PUBLIC        Delay1000ms
+  C:028CH         PUBLIC        vSystem_init
+  D:00B8H         PUBLIC        IP
+  C:00F2H         PUBLIC        vBTN_Process
+  D:00D8H         PUBLIC        CCON
+  C:02B3H         PUBLIC        main
+  D:001DH         PUBLIC        btn_number
+  D:0098H         PUBLIC        SCON
+  D:0088H         PUBLIC        TCON
+  D:001FH         PUBLIC        btn_number_3
+  D:0020H         PUBLIC        btn_number_4
+  C:01C9H         PUBLIC        vSmg_Process
+  D:0021H         PUBLIC        cnt_btn
+  C:0141H         PUBLIC        vBTN_Number_Process
+  D:0022H         PUBLIC        key_val
+  C:018CH         PUBLIC        t2int
+  D:00D0H         PUBLIC        PSW
+  -------         PROC          DELAY1000MS
+  -------         DO            
+  D:0007H         SYMBOL        i
+  D:0006H         SYMBOL        j
+  D:0005H         SYMBOL        k
+  -------         ENDDO         
+  C:02D4H         LINE#         3
+  C:02D4H         LINE#         4
+  C:02D4H         LINE#         7
+  C:02D5H         LINE#         8
+  C:02D6H         LINE#         9
+  C:02D8H         LINE#         10
+BL51 BANKED LINKER/LOCATER V6.22                                                      11/09/2025  20:39:05  PAGE 4
+
+
+  C:02DAH         LINE#         11
+  C:02DCH         LINE#         13
+  C:02DCH         LINE#         15
+  C:02DCH         LINE#         16
+  C:02DEH         LINE#         17
+  C:02E0H         LINE#         18
+  C:02E2H         LINE#         19
+  -------         ENDPROC       DELAY1000MS
+  -------         PROC          VSYSTEM_INIT
+  C:028CH         LINE#         22
+  C:028CH         LINE#         23
+  C:028CH         LINE#         24
+  C:0293H         LINE#         25
+  C:029AH         LINE#         26
+  -------         ENDPROC       VSYSTEM_INIT
+  -------         PROC          VBTN_PROCESS
+  -------         DO            
+  D:001BH         SYMBOL        k
+  -------         ENDDO         
+  C:00F2H         LINE#         33
+  C:00F2H         LINE#         34
+  C:00F2H         LINE#         36
+  C:00F9H         LINE#         37
+  C:00F9H         LINE#         38
+  C:00FCH         LINE#         39
+  C:0101H         LINE#         40
+  C:0106H         LINE#         41
+  C:010BH         LINE#         42
+  C:010BH         LINE#         43
+  C:010FH         LINE#         44
+  C:010FH         LINE#         45
+  C:0112H         LINE#         46
+  C:0112H         LINE#         47
+  C:011AH         LINE#         48
+  C:011DH         LINE#         49
+  C:011DH         LINE#         50
+  C:0123H         LINE#         51
+  C:0123H         LINE#         52
+  C:0126H         LINE#         53
+  C:0126H         LINE#         54
+  C:012BH         LINE#         55
+  C:012BH         LINE#         56
+  C:0136H         LINE#         57
+  C:0136H         LINE#         58
+  C:013BH         LINE#         59
+  C:013BH         LINE#         60
+  C:0140H         LINE#         61
+  C:0140H         LINE#         62
+  C:0140H         LINE#         63
+  -------         ENDPROC       VBTN_PROCESS
+  -------         PROC          VBTN_NUMBER_PROCESS
+  C:0141H         LINE#         67
+  C:0141H         LINE#         68
+  C:0141H         LINE#         69
+  C:014CH         LINE#         70
+  C:014CH         LINE#         71
+  C:0165H         LINE#         72
+BL51 BANKED LINKER/LOCATER V6.22                                                      11/09/2025  20:39:05  PAGE 5
+
+
+  C:0167H         LINE#         74
+  C:016AH         LINE#         75
+  C:0175H         LINE#         76
+  C:0175H         LINE#         77
+  C:0187H         LINE#         78
+  C:0188H         LINE#         80
+  C:018BH         LINE#         81
+  -------         ENDPROC       VBTN_NUMBER_PROCESS
+  -------         PROC          VSMG_PROCESS
+  C:01C9H         LINE#         83
+  C:01C9H         LINE#         84
+  C:01C9H         LINE#         85
+  C:01CCH         LINE#         86
+  C:01CEH         LINE#         87
+  C:01D0H         LINE#         88
+  C:01D2H         LINE#         89
+  C:01D5H         LINE#         90
+  C:01D8H         LINE#         91
+  C:01F2H         LINE#         92
+  C:0204H         LINE#         93
+  -------         ENDPROC       VSMG_PROCESS
+  -------         PROC          MAIN
+  C:02B3H         LINE#         95
+  C:02B3H         LINE#         96
+  C:02B3H         LINE#         97
+  C:02B6H         LINE#         98
+  C:02B9H         LINE#         100
+  C:02B9H         LINE#         101
+  C:02B9H         LINE#         102
+  C:02BCH         LINE#         103
+  C:02BFH         LINE#         104
+  C:02C2H         LINE#         105
+  -------         ENDPROC       MAIN
+  -------         PROC          T2INT
+  C:018CH         LINE#         109
+  C:01A9H         LINE#         111
+  C:01ABH         LINE#         112
+  C:01AEH         LINE#         113
+  -------         ENDPROC       T2INT
+  -------         ENDMOD        MAIN
+
+  -------         MODULE        KBD
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0080H         PUBLIC        P0
+  D:0090H         PUBLIC        P1
+  C:0205H         PUBLIC        ucBTN_Read_State
+  D:00A0H         PUBLIC        P2
+  D:00B0H         PUBLIC        P3
+  D:00C0H         PUBLIC        P4
+  D:00C8H         PUBLIC        P5
+  D:00E8H         PUBLIC        P6
+  D:00F8H         PUBLIC        P7
+  D:00A8H         PUBLIC        IE
+  D:00B8H         PUBLIC        IP
+  D:00D8H         PUBLIC        CCON
+  D:0098H         PUBLIC        SCON
+  D:0088H         PUBLIC        TCON
+BL51 BANKED LINKER/LOCATER V6.22                                                      11/09/2025  20:39:05  PAGE 6
+
+
+  C:0264H         PUBLIC        ucBTN_KeyIO_State
+  D:00D0H         PUBLIC        PSW
+  -------         PROC          UCBTN_KEYIO_STATE
+  -------         DO            
+  D:0007H         SYMBOL        key_io
+  -------         ENDDO         
+  C:0264H         LINE#         7
+  C:0264H         LINE#         8
+  C:0264H         LINE#         9
+  C:0266H         LINE#         10
+  C:0269H         LINE#         11
+  C:026FH         LINE#         12
+  C:026FH         LINE#         13
+  C:0276H         LINE#         14
+  C:027DH         LINE#         15
+  C:0284H         LINE#         16
+  C:028BH         LINE#         17
+  C:028BH         LINE#         18
+  C:028BH         LINE#         19
+  -------         ENDPROC       UCBTN_KEYIO_STATE
+  -------         PROC          UCBTN_READ_STATE
+  -------         DO            
+  D:0023H         SYMBOL        key_state
+  D:0007H         SYMBOL        key_io
+  D:0006H         SYMBOL        key_return
+  -------         ENDDO         
+  C:0205H         LINE#         21
+  C:0205H         LINE#         22
+  C:0205H         LINE#         24
+  C:0208H         LINE#         25
+  C:020BH         LINE#         26
+  C:0217H         LINE#         27
+  C:0217H         LINE#         28
+  C:0217H         LINE#         29
+  C:021DH         LINE#         30
+  C:021FH         LINE#         32
+  C:021FH         LINE#         33
+  C:0222H         LINE#         34
+  C:0222H         LINE#         35
+  C:0225H         LINE#         36
+  C:0226H         LINE#         37
+  C:0228H         LINE#         39
+  C:022BH         LINE#         40
+  C:022DH         LINE#         42
+  C:022DH         LINE#         43
+  C:0232H         LINE#         44
+  C:0232H         LINE#         45
+  C:0232H         LINE#         46
+  C:0234H         LINE#         47
+  -------         ENDPROC       UCBTN_READ_STATE
+  -------         ENDMOD        KBD
+
+  -------         MODULE        SMG
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0080H         PUBLIC        P0
+  D:0090H         PUBLIC        P1
+  D:00A0H         PUBLIC        P2
+BL51 BANKED LINKER/LOCATER V6.22                                                      11/09/2025  20:39:05  PAGE 7
+
+
+  D:00B0H         PUBLIC        P3
+  D:00C0H         PUBLIC        P4
+  D:00C8H         PUBLIC        P5
+  D:00E8H         PUBLIC        P6
+  D:00F8H         PUBLIC        P7
+  D:00A8H         PUBLIC        IE
+  C:0235H         PUBLIC        vSmg_Disp
+  D:00B8H         PUBLIC        IP
+  D:00D8H         PUBLIC        CCON
+  D:0098H         PUBLIC        SCON
+  D:0088H         PUBLIC        TCON
+  D:0009H         PUBLIC        smg_code
+  D:0013H         PUBLIC        smg_buf
+  D:00D0H         PUBLIC        PSW
+  -------         PROC          VSMG_DISP
+  -------         DO            
+  D:0008H         SYMBOL        k
+  -------         ENDDO         
+  C:0235H         LINE#         6
+  C:0235H         LINE#         7
+  C:0235H         LINE#         9
+  C:023CH         LINE#         10
+  C:0249H         LINE#         11
+  C:025CH         LINE#         12
+  C:0263H         LINE#         13
+  -------         ENDPROC       VSMG_DISP
+  -------         ENDMOD        SMG
+
+  -------         MODULE        P2P0
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0080H         PUBLIC        P0
+  D:0090H         PUBLIC        P1
+  D:00A0H         PUBLIC        P2
+  D:00B0H         PUBLIC        P3
+  D:00C0H         PUBLIC        P4
+  D:00C8H         PUBLIC        P5
+  D:00E8H         PUBLIC        P6
+  D:00F8H         PUBLIC        P7
+  D:00A8H         PUBLIC        IE
+  D:00B8H         PUBLIC        IP
+  D:00D8H         PUBLIC        CCON
+  C:02E3H         PUBLIC        _vP2p0_ctrl
+  D:0098H         PUBLIC        SCON
+  D:0088H         PUBLIC        TCON
+  D:00D0H         PUBLIC        PSW
+  -------         PROC          _VP2P0_CTRL
+  D:0007H         SYMBOL        p2data
+  D:0005H         SYMBOL        p0data
+  C:02E3H         LINE#         3
+  C:02E3H         LINE#         4
+  C:02E3H         LINE#         5
+  C:02E5H         LINE#         6
+  C:02ECH         LINE#         7
+  C:02EFH         LINE#         8
+  -------         ENDPROC       _VP2P0_CTRL
+  -------         ENDMOD        P2P0
+
+BL51 BANKED LINKER/LOCATER V6.22                                                      11/09/2025  20:39:05  PAGE 8
+
+
+  -------         MODULE        TIMER
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0080H         PUBLIC        P0
+  D:0090H         PUBLIC        P1
+  D:00A0H         PUBLIC        P2
+  D:00B0H         PUBLIC        P3
+  D:00C0H         PUBLIC        P4
+  D:00C8H         PUBLIC        P5
+  B:00A8H.7       PUBLIC        EA
+  D:00E8H         PUBLIC        P6
+  D:00F8H         PUBLIC        P7
+  D:00A8H         PUBLIC        IE
+  D:00B8H         PUBLIC        IP
+  C:02A1H         PUBLIC        vTimer2_Init
+  D:00D8H         PUBLIC        CCON
+  D:0098H         PUBLIC        SCON
+  D:0088H         PUBLIC        TCON
+  D:00AFH         PUBLIC        IE2
+  D:008EH         PUBLIC        AUXR
+  D:00D6H         PUBLIC        T2H
+  D:00D7H         PUBLIC        T2L
+  D:00D0H         PUBLIC        PSW
+  -------         PROC          VTIMER2_INIT
+  C:02A1H         LINE#         3
+  C:02A1H         LINE#         4
+  C:02A1H         LINE#         5
+  C:02A4H         LINE#         6
+  C:02A7H         LINE#         7
+  C:02AAH         LINE#         8
+  C:02ADH         LINE#         9
+  C:02B0H         LINE#         10
+  C:02B2H         LINE#         11
+  -------         ENDPROC       VTIMER2_INIT
+  -------         ENDMOD        TIMER
+
+  -------         MODULE        ?C?UIDIV
+  C:0003H         PUBLIC        ?C?UIDIV
+  -------         ENDMOD        ?C?UIDIV
+
+Program Size: data=37.0 xdata=0 code=741
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,230 @@
+C51 COMPILER V9.56.0.0   MAIN                                                              03/08/2026 15:27:52 PAGE 1   
+
+
+C51 COMPILER V9.56.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: D:\keil c51v956\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\library\device;.\library\s
+                    -ystem) DEBUG OBJECTEXTEND PRINT(.\Listings\main.lst) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include "system.h"
+   2          
+   3          u8 second,minute,hour,second1,minute1,hour1;
+   4          u8 disp_mode,b,z;
+   5          u8 mima4[1]=9,mima3[1]=5,mima2[1]=2,mima1[1]=7;
+   6          u8 key_mima=10;
+   7          u8 mima_disp1[1]=10,mima_disp2[1]=10,mima_disp3[1]=10,mima_disp4[1]=10;
+   8          
+   9          void vSystem_Init()
+  10          {
+  11   1              vP2P0_Ctrl(0xe0,0xff);
+  12   1              vP2P0_Ctrl(0xa0,0x10);
+  13   1              vP2P0_Ctrl(0x80,0xff);
+  14   1      }
+  15          
+  16          u8 cnt_kbd;
+  17          u16 cnt_relay,cnt_buzzer;
+  18          u8 key_val;
+  19          void vKBD_Proc()
+  20          {
+  21   1              if(cnt_kbd>=10&&b==0&&z==0)
+  22   1              {
+  23   2                      cnt_kbd=0;
+  24   2                      key_mima=10;
+  25   2                      key_val=ucKBD_Read_State();
+  26   2                      if(key_val==4)
+  27   2                      {
+  28   3                              disp_mode=(disp_mode+1)%3;
+  29   3                              if(disp_mode==1)
+  30   3                                      mima_disp1[0]=10,mima_disp2[0]=10,mima_disp3[0]=10,mima_disp4[0]=10;
+  31   3                      }
+  32   2                      if(key_val==12) key_mima=0;if(key_val==9) key_mima=1;if(key_val==13) key_mima=2;if(key_val==17) key_mima
+             -=3;
+  33   2                      if(key_val==10) key_mima=4;if(key_val==14) key_mima=5;if(key_val==18) key_mima=6;if(key_val==11) key_mim
+             -a=7;
+  34   2                      if(key_val==15) key_mima=8;if(key_val==19) key_mima=9;
+  35   2                              if(disp_mode==1)
+  36   2                              {
+  37   3                                      if(key_mima<10&&(mima_disp4[0]==10))
+  38   3                                      {
+  39   4                                              mima_disp4[0]=mima_disp3[0];mima_disp3[0]=mima_disp2[0];mima_disp2[0]=mima_disp1[0];mima_disp1[0]=key
+             -_mima;
+  40   4                                      }
+  41   3                                      if(key_val==5)
+  42   3                                      {
+  43   4                                              if(mima_disp4[0]==mima4[0]&&mima_disp3[0]==mima3[0]&&mima_disp2[0]==mima2[0]&&mima_disp1[0]==mima1[0]
+             -)
+  44   4                                              {
+  45   5                                                      second1=second;minute1=minute;hour1=hour;
+  46   5                                                      vP2P0_Ctrl(0xa0,0x00);
+  47   5                                                      b=1;
+  48   5                                              }
+  49   4                                              else
+  50   4                                              {
+C51 COMPILER V9.56.0.0   MAIN                                                              03/08/2026 15:27:52 PAGE 2   
+
+  51   5                                                      vP2P0_Ctrl(0xa0,0x50);
+  52   5                                                      z=1;
+  53   5                                              }
+  54   4                                      }
+  55   3                                      if(key_val==6)
+  56   3                                      {
+  57   4                                              mima_disp1[0]=10;mima_disp2[0]=10;mima_disp3[0]=10;mima_disp4[0]=10;
+  58   4                                      }
+  59   3                              }
+  60   2              }
+  61   1      }
+  62          
+  63          void vDs1302_Proc()
+  64          {
+  65   1              second=bcdtodec(Read_Ds1302_Byte(0x81));
+  66   1              minute=bcdtodec(Read_Ds1302_Byte(0x83));
+  67   1              hour=bcdtodec(Read_Ds1302_Byte(0x85));
+  68   1      }
+  69          
+  70          void vcnt_Proc()
+  71          {
+  72   1              if(cnt_relay>=3000)
+  73   1              {
+  74   2                      cnt_relay=0;
+  75   2                      vP2P0_Ctrl(0xa0,0x10);
+  76   2                      b=0;
+  77   2                      mima_disp1[0]=10;mima_disp2[0]=10;mima_disp3[0]=10;mima_disp4[0]=10;
+  78   2                      disp_mode=0;
+  79   2              }
+  80   1              if(cnt_buzzer>=3000)
+  81   1              {
+  82   2                      cnt_buzzer=0;
+  83   2                      vP2P0_Ctrl(0xa0,0x10);
+  84   2                      z=0;
+  85   2                      mima_disp1[0]=10;mima_disp2[0]=10;mima_disp3[0]=10;mima_disp4[0]=10;
+  86   2                      disp_mode=0;
+  87   2              }
+  88   1      }
+  89          
+  90          u8 led_ctrl=0xff;
+  91          void vLED_Proc()
+  92          {
+  93   1              if(disp_mode==0)
+  94   1                      led_ctrl&=~0x01;
+  95   1              else
+  96   1                      led_ctrl|=0x01;
+  97   1              if(disp_mode==1)
+  98   1                      led_ctrl&=~0x02;
+  99   1              else
+ 100   1                      led_ctrl|=0x02;
+ 101   1              if(disp_mode==2)
+ 102   1                      led_ctrl&=~0x04;
+ 103   1              else
+ 104   1                      led_ctrl|=0x04; 
+ 105   1              if(b==1)
+ 106   1                      led_ctrl&=~0x40;
+ 107   1              else
+ 108   1                      led_ctrl|=0x40;
+ 109   1              if(z==1)
+ 110   1                      led_ctrl&=~0x80;
+ 111   1              else
+ 112   1                      led_ctrl|=0x80;
+C51 COMPILER V9.56.0.0   MAIN                                                              03/08/2026 15:27:52 PAGE 3   
+
+ 113   1              vP2P0_Ctrl(0x80,led_ctrl);
+ 114   1      }
+ 115          
+ 116          void vSMG_Proc()
+ 117          {
+ 118   1              if(disp_mode==0)
+ 119   1              {
+ 120   2                      smg_buf[0]=smg_code[hour/10];
+ 121   2                      smg_buf[1]=smg_code[hour%10];
+ 122   2                      smg_buf[2]=0x40;
+ 123   2                      smg_buf[3]=smg_code[minute/10];
+ 124   2                      smg_buf[4]=smg_code[minute%10];
+ 125   2                      smg_buf[5]=0x40;
+ 126   2                      smg_buf[6]=smg_code[second/10];
+ 127   2                      smg_buf[7]=smg_code[second%10];         
+ 128   2              }
+ 129   1              if(disp_mode==1)
+ 130   1              {
+ 131   2                      smg_buf[0]=0x73;
+ 132   2                      smg_buf[1]=0x00;
+ 133   2                      smg_buf[2]=0x00;
+ 134   2                      smg_buf[3]=0x00;        
+ 135   2                      if(mima_disp1[0]==10&&mima_disp2[0]==10&&mima_disp3[0]==10&&mima_disp4[0]==10)
+ 136   2                      {
+ 137   3                              smg_buf[4]=0x40;
+ 138   3                              smg_buf[5]=0x40;
+ 139   3                              smg_buf[6]=0x40;
+ 140   3                              smg_buf[7]=0x40;                
+ 141   3                      }
+ 142   2                      else
+ 143   2                      {
+ 144   3                              if(mima_disp4[0]!=10)
+ 145   3                                      smg_buf[4]=smg_code[mima_disp4[0]];
+ 146   3                              else
+ 147   3                                      smg_buf[4]=0x40;
+ 148   3                              if(mima_disp3[0]!=10)
+ 149   3                                      smg_buf[5]=smg_code[mima_disp3[0]];
+ 150   3                              else
+ 151   3                                      smg_buf[5]=0x40;
+ 152   3                              if(mima_disp2[0]!=10)
+ 153   3                                      smg_buf[6]=smg_code[mima_disp2[0]];
+ 154   3                              else
+ 155   3                                      smg_buf[6]=0x40;
+ 156   3                              smg_buf[7]=smg_code[mima_disp1[0]];             
+ 157   3                      }
+ 158   2              }
+ 159   1              if(disp_mode==2)
+ 160   1              {
+ 161   2                      smg_buf[0]=0x77;
+ 162   2                      smg_buf[1]=0x00;
+ 163   2                      smg_buf[2]=smg_code[hour1/10];
+ 164   2                      smg_buf[3]=smg_code[hour1%10];
+ 165   2                      smg_buf[4]=smg_code[minute1/10];
+ 166   2                      smg_buf[5]=smg_code[minute1%10];
+ 167   2                      smg_buf[6]=smg_code[second1/10];
+ 168   2                      smg_buf[7]=smg_code[second1%10];        
+ 169   2              }
+ 170   1      
+ 171   1      }
+ 172          
+ 173          void main()
+ 174          {
+C51 COMPILER V9.56.0.0   MAIN                                                              03/08/2026 15:27:52 PAGE 4   
+
+ 175   1              vSystem_Init();
+ 176   1              Timer2Init();
+ 177   1              vClock_Set(0,0,0);
+ 178   1              
+ 179   1              while(1)
+ 180   1              {
+ 181   2                      vSMG_Proc();
+ 182   2                      vKBD_Proc();
+ 183   2                      vDs1302_Proc();
+ 184   2                      vcnt_Proc();
+ 185   2              }
+ 186   1              
+ 187   1      }
+ 188          
+ 189          void vTimer2_ISR() interrupt 12
+ 190          {
+ 191   1              vSmg_Disp();
+ 192   1              cnt_kbd++;
+ 193   1              if(b==1) cnt_relay++;
+ 194   1              if(z==1) cnt_buzzer++;
+ 195   1              vLED_Proc();
+ 196   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    932    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     25    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

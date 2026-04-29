@@ -1,0 +1,114 @@
+C51 COMPILER V9.56.0.0   DELAY                                                             09/15/2025 18:19:18 PAGE 1   
+
+
+C51 COMPILER V9.56.0.0, COMPILATION OF MODULE DELAY
+OBJECT MODULE PLACED IN .\Objects\Delay.obj
+COMPILER INVOKED BY: D:\keil c51v956\C51\BIN\C51.EXE Library\System\Delay.c OMF2 OPTIMIZE(8,SPEED) REGFILE(.\Objects\IAP
+                    -15_Project.ORC) BROWSE INCDIR(.\Library\System;.\Library\Device) DEBUG PRINT(.\Listings\Delay.lst) OBJECT(.\Objects\Dela
+                    -y.obj)
+
+line level    source
+
+   1          #include "Delay.h"
+   2          
+   3          /**
+   4            * @brief  实现毫秒级延时 （不推荐长时间延时，会造成程序阻塞）
+   5            * @param  ms输入范围为1~65535
+   6            * @retval None
+   7            * @author dianshe.taobao.com
+   8            */
+   9          void vDelay_Ms(unsigned int ms)         //@12.000MHz
+  10          {
+  11   1              unsigned char i, j;
+  12   1              unsigned int k;                                 //应该将k定义成unsigned int
+  13   1              
+  14   1              for(k=0;k<ms;k++)
+  15   1              {
+  16   2                      i = 12;
+  17   2                      j = 169;
+  18   2                      do
+  19   2                      {
+  20   3                              while (--j);
+  21   3                      } while (--i);
+  22   2              }       
+  23   1      }
+  24          
+  25          /**
+  26            * @brief  实现1~10微秒延时
+  27            * @param  us输入范围为1~10
+  28            * @retval None
+  29            * @author dianshe.taobao.com
+  30            */
+  31          void vDelay_Us(unsigned int us)         //@12.000MHz
+  32          {
+  33   1              unsigned int k;
+  34   1              for(k=0;k<us;k++)
+  35   1              {
+  36   2                      _nop_();
+  37   2                      _nop_();
+  38   2                      _nop_();
+  39   2                      _nop_();
+  40   2              }
+  41   1      }
+  42          
+  43          /**
+  44            * @brief  实现10~100微秒延时
+  45            * @param  us输入范围为1~10
+  46            * @retval None
+  47            * @author dianshe.taobao.com
+  48            */
+  49          void vDelay_10us(unsigned int us)       //@12.000MHz
+  50          {
+  51   1              unsigned char i;
+  52   1              unsigned int k;
+  53   1              
+C51 COMPILER V9.56.0.0   DELAY                                                             09/15/2025 18:19:18 PAGE 2   
+
+  54   1              for(k=0;k<us;k++)
+  55   1              {
+  56   2                      _nop_();
+  57   2                      _nop_();
+  58   2                      i = 27;
+  59   2                      while (--i);
+  60   2              }       
+  61   1      }
+  62          
+  63          /**
+  64            * @brief  实现100~1000微秒延时
+  65            * @param  us输入范围为1~10
+  66            * @retval None
+  67            * @author dianshe.taobao.com
+  68            */
+  69          void vDelay_100us(unsigned int us)      //@12.000MHz
+  70          {
+  71   1              unsigned char i, j;
+  72   1              unsigned int k;
+  73   1                      
+  74   1              for(k=0;k<us;k++)
+  75   1              {
+  76   2                      i = 2;
+  77   2                      j = 39;
+  78   2                      do
+  79   2                      {
+  80   3                              while (--j);
+  81   3                      } while (--i);
+  82   2              }
+  83   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     98    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

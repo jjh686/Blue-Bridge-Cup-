@@ -1,0 +1,98 @@
+C51 COMPILER V9.56.0.0   MAIN                                                              08/20/2025 20:38:44 PAGE 1   
+
+
+C51 COMPILER V9.56.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: D:\keil c51v956\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings
+                    -\main.lst) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include <STC15F2K60S2.H>
+   2          #include "intrins.h"
+   3          
+   4          void vDelay_Ms(unsigned int ms)         //@12.000MHz
+   5          {
+   6   1              unsigned char i, j, k;
+   7   1      
+   8   1              for(k=0;k<ms;k++)
+   9   1              {
+  10   2                      i = 12;
+  11   2                      j = 169;
+  12   2                      do
+  13   2                      {
+  14   3                              while (--j);
+  15   3                      } while (--i);
+  16   2              }
+  17   1      }
+  18          
+  19          void vDelay_Us(unsigned int us)         //@12.000MHz
+  20          {
+  21   1              unsigned char k;        
+  22   1              
+  23   1              for(k=0;k<us;k++)
+  24   1              {
+  25   2                      _nop_();
+  26   2                      _nop_();
+  27   2                      _nop_();
+  28   2                      _nop_();                
+  29   2              }
+  30   1      }
+  31          
+  32          void vDelay_10us(unsigned int us)               //@12.000MHz
+  33          {
+  34   1              unsigned char i, k;
+  35   1      
+  36   1              for(k=0;k<us;k++)
+  37   1              {
+  38   2                      _nop_();
+  39   2                      _nop_();
+  40   2                      i = 27;
+  41   2                      while (--i);            
+  42   2              }
+  43   1      }
+  44          
+  45          void vDelay_100us(unsigned int us)              //@12.000MHz
+  46          {
+  47   1              unsigned char i, j, k;
+  48   1      
+  49   1              for(k=0;k<us;k++)
+  50   1              {
+  51   2                      i = 2;
+  52   2                      j = 39;
+  53   2                      do
+  54   2                      {
+C51 COMPILER V9.56.0.0   MAIN                                                              08/20/2025 20:38:44 PAGE 2   
+
+  55   3                              while (--j);
+  56   3                      } while (--i);          
+  57   2              }
+  58   1      }
+  59          
+  60          void main(void)
+  61          {
+  62   1              
+  63   1              
+  64   1              while(1)
+  65   1              {
+  66   2                      P34 = 1;
+  67   2                      vDelay_Ms(1);
+  68   2                      vDelay_100us(5);
+  69   2                      P34 = 0;
+  70   2                      vDelay_100us(5);
+  71   2              }
+  72   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     99    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

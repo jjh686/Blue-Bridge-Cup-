@@ -1,0 +1,7 @@
+".\Objects\STARTUP.obj",
+".\Objects\main.obj",
+".\Objects\Delay.obj",
+".\Objects\Device.obj" 
+TO ".\Objects\STC-ISP" 
+
+PRINT(".\Listings\STC-ISP.map")

@@ -1,0 +1,233 @@
+BL51 BANKED LINKER/LOCATER V6.22                                                        08/21/2025  18:31:33  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22, INVOKED BY:
+D:\KEIL C51V956\C51\BIN\BL51.EXE .\Objects\STARTUP.obj, .\Objects\main.obj TO .\Objects\STC15 PRINT (.\Listings\STC15.m5
+>> 1) RAMSIZE (256)
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\STARTUP.obj (?C_STARTUP)
+  .\Objects\main.obj (MAIN)
+  D:\KEIL C51V956\C51\LIB\C51S.LIB (?C_INIT)
+
+
+LINK MAP OF MODULE:  .\Objects\STC15 (?C_STARTUP)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            IDATA   0008H     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+            CODE    0003H     008CH     UNIT         ?C_C51STARTUP
+            CODE    008FH     001AH     UNIT         ?PR?_VDELAY_MS?MAIN
+            CODE    00A9H     001AH     UNIT         ?PR?_VDELAY_100US?MAIN
+            CODE    00C3H     0018H     UNIT         ?PR?_VDELAY_10US?MAIN
+            CODE    00DBH     0016H     UNIT         ?PR?_VDELAY_US?MAIN
+            CODE    00F1H     0008H     UNIT         ?PR?_VDEVICE_CTRL?MAIN
+            CODE    00F9H     0001H     UNIT         ?C_INITSEG
+
+
+
+OVERLAY MAP OF MODULE:   .\Objects\STC15 (?C_STARTUP)
+
+
+SEGMENT
+  +--> CALLED SEGMENT
+---------------------
+?C_C51STARTUP
+  +--> ?C_INITSEG
+
+
+
+UNRESOLVED EXTERNAL SYMBOLS:
+   MAIN
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\STC15 (?C_STARTUP)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        ?C_STARTUP
+BL51 BANKED LINKER/LOCATER V6.22                                                      08/21/2025  18:31:33  PAGE 2
+
+
+  C:0003H         SEGMENT       ?C_C51STARTUP
+  I:0008H         SEGMENT       ?STACK
+  C:0000H         PUBLIC        ?C_STARTUP
+  D:00E0H         SYMBOL        ACC
+  D:00F0H         SYMBOL        B
+  D:0083H         SYMBOL        DPH
+  D:0082H         SYMBOL        DPL
+  N:0000H         SYMBOL        IBPSTACK
+  N:0100H         SYMBOL        IBPSTACKTOP
+  N:0080H         SYMBOL        IDATALEN
+  C:0006H         SYMBOL        IDATALOOP
+  N:0000H         SYMBOL        PBPSTACK
+  N:0100H         SYMBOL        PBPSTACKTOP
+  N:0000H         SYMBOL        PDATALEN
+  N:0000H         SYMBOL        PDATASTART
+  N:0000H         SYMBOL        PPAGE
+  N:0000H         SYMBOL        PPAGEENABLE
+  D:00A0H         SYMBOL        PPAGE_SFR
+  D:0081H         SYMBOL        SP
+  C:0003H         SYMBOL        STARTUP1
+  N:0000H         SYMBOL        XBPSTACK
+  N:0000H         SYMBOL        XBPSTACKTOP
+  N:0000H         SYMBOL        XDATALEN
+  N:0000H         SYMBOL        XDATASTART
+  C:0000H         LINE#         126
+  C:0003H         LINE#         133
+  C:0005H         LINE#         134
+  C:0006H         LINE#         135
+  C:0007H         LINE#         136
+  C:0009H         LINE#         185
+  C:000CH         LINE#         196
+  -------         ENDMOD        ?C_STARTUP
+
+  -------         MODULE        MAIN
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0080H         PUBLIC        P0
+  D:0090H         PUBLIC        P1
+  D:00A0H         PUBLIC        P2
+  D:00B0H         PUBLIC        P3
+  D:00C0H         PUBLIC        P4
+  D:00C8H         PUBLIC        P5
+  D:00E8H         PUBLIC        P6
+  D:00F8H         PUBLIC        P7
+  C:008FH         PUBLIC        _vDelay_Ms
+  D:00A8H         PUBLIC        IE
+  C:00DBH         PUBLIC        _vDelay_Us
+  C:00C3H         PUBLIC        _vDelay_10us
+  D:00B8H         PUBLIC        IP
+  D:00D8H         PUBLIC        CCON
+  D:0098H         PUBLIC        SCON
+  D:0088H         PUBLIC        TCON
+  C:00F1H         PUBLIC        _vDevice_Ctrl
+  C:00A9H         PUBLIC        _vDelay_100us
+  D:00D0H         PUBLIC        PSW
+  -------         PROC          _VDELAY_MS
+  D:0006H         SYMBOL        ms
+  -------         DO            
+BL51 BANKED LINKER/LOCATER V6.22                                                      08/21/2025  18:31:33  PAGE 3
+
+
+  D:0001H         SYMBOL        i
+  D:0003H         SYMBOL        j
+  D:0004H         SYMBOL        k
+  -------         ENDDO         
+  C:008FH         LINE#         4
+  C:008FH         LINE#         5
+  C:008FH         LINE#         9
+  C:0099H         LINE#         10
+  C:0099H         LINE#         11
+  C:009BH         LINE#         12
+  C:009DH         LINE#         14
+  C:009DH         LINE#         15
+  C:009FH         LINE#         16
+  C:00A1H         LINE#         17
+  C:00A8H         LINE#         18
+  -------         ENDPROC       _VDELAY_MS
+  -------         PROC          _VDELAY_US
+  D:0006H         SYMBOL        us
+  -------         DO            
+  D:0004H         SYMBOL        k
+  -------         ENDDO         
+  C:00DBH         LINE#         20
+  C:00DBH         LINE#         21
+  C:00DBH         LINE#         24
+  C:00E5H         LINE#         25
+  C:00E5H         LINE#         26
+  C:00E6H         LINE#         27
+  C:00E7H         LINE#         28
+  C:00E8H         LINE#         29
+  C:00E9H         LINE#         30
+  C:00F0H         LINE#         31
+  -------         ENDPROC       _VDELAY_US
+  -------         PROC          _VDELAY_10US
+  D:0006H         SYMBOL        us
+  -------         DO            
+  D:0003H         SYMBOL        i
+  D:0004H         SYMBOL        k
+  -------         ENDDO         
+  C:00C3H         LINE#         33
+  C:00C3H         LINE#         34
+  C:00C3H         LINE#         38
+  C:00CDH         LINE#         39
+  C:00CDH         LINE#         40
+  C:00CEH         LINE#         41
+  C:00CFH         LINE#         42
+  C:00D1H         LINE#         43
+  C:00D3H         LINE#         44
+  C:00DAH         LINE#         45
+  -------         ENDPROC       _VDELAY_10US
+  -------         PROC          _VDELAY_100US
+  D:0006H         SYMBOL        us
+  -------         DO            
+  D:0001H         SYMBOL        i
+  D:0003H         SYMBOL        j
+  D:0004H         SYMBOL        k
+  -------         ENDDO         
+  C:00A9H         LINE#         47
+BL51 BANKED LINKER/LOCATER V6.22                                                      08/21/2025  18:31:33  PAGE 4
+
+
+  C:00A9H         LINE#         48
+  C:00A9H         LINE#         52
+  C:00B3H         LINE#         53
+  C:00B3H         LINE#         54
+  C:00B5H         LINE#         55
+  C:00B7H         LINE#         57
+  C:00B7H         LINE#         58
+  C:00B9H         LINE#         59
+  C:00BBH         LINE#         60
+  C:00C2H         LINE#         61
+  -------         ENDPROC       _VDELAY_100US
+  -------         PROC          _VDEVICE_CTRL
+  D:0007H         SYMBOL        p2data
+  D:0005H         SYMBOL        p0data
+  C:00F1H         LINE#         143
+  C:00F1H         LINE#         144
+  C:00F1H         LINE#         145
+  C:00F3H         LINE#         146
+  C:00F5H         LINE#         147
+  C:00F8H         LINE#         148
+  -------         ENDPROC       _VDEVICE_CTRL
+  -------         ENDMOD        MAIN
+
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_VDELAY_MS?MAIN
+
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_VDELAY_US?MAIN
+
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_VDELAY_10US?MAIN
+
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_VDELAY_100US?MAIN
+
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_VDEVICE_CTRL?MAIN
+
+*** WARNING L1: UNRESOLVED EXTERNAL SYMBOL
+    SYMBOL:  MAIN
+    MODULE:  D:\KEIL C51V956\C51\LIB\C51S.LIB (?C_INIT)
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  MAIN
+    MODULE:  D:\KEIL C51V956\C51\LIB\C51S.LIB (?C_INIT)
+    ADDRESS: 0010H
+
+Program Size: data=9.0 xdata=0 code=250
+LINK/LOCATE RUN COMPLETE.  7 WARNING(S),  0 ERROR(S)

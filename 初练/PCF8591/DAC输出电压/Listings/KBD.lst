@@ -1,0 +1,136 @@
+C51 COMPILER V9.56.0.0   KBD                                                               09/15/2025 18:19:18 PAGE 1   
+
+
+C51 COMPILER V9.56.0.0, COMPILATION OF MODULE KBD
+OBJECT MODULE PLACED IN .\Objects\KBD.obj
+COMPILER INVOKED BY: D:\keil c51v956\C51\BIN\C51.EXE Library\Device\KBD.c OMF2 OPTIMIZE(8,SPEED) REGFILE(.\Objects\IAP15
+                    -_Project.ORC) BROWSE INCDIR(.\Library\System;.\Library\Device) DEBUG PRINT(.\Listings\KBD.lst) OBJECT(.\Objects\KBD.obj)
+
+line level    source
+
+   1          #include "KBD.h"
+   2          
+   3          /**
+   4            * @brief  矩阵键盘 - 获取键值
+   5            * @param  None
+   6            * @retval key_io: 当前按键的键值，实际的按键标号
+   7            * @author dianshe.taobao.com
+   8            */
+   9          u8 ucKBD_KeyIO_State()
+  10          {
+  11   1              u8 key_io = 0;
+  12   1              P3=0xf0;P4=0xff;        //列扫描
+  13   1              if(P44==0) key_io=4;
+  14   1              if(P42==0) key_io=8;
+  15   1              if(P35==0) key_io=12;
+  16   1              if(P34==0) key_io=16;
+  17   1      
+  18   1              P3=0x0f;P4=0x00;        //行扫描
+  19   1              if(P33==0) key_io=key_io + 0;
+  20   1              if(P32==0) key_io=key_io + 1;
+  21   1              if(P31==0) key_io=key_io + 2;
+  22   1              if(P30==0) key_io=key_io + 3;
+  23   1              
+  24   1              return key_io;
+  25   1      }
+  26          
+  27          /**
+  28            * @brief  矩阵键盘 - 状态机法
+  29            * @param  None
+  30            * @retval key_retrun: 按键的键值，单次触发
+  31            * @author dianshe.taobao.com
+  32            */
+  33          #define KEY_NO   0  //无按键状态，用于判断是否按下
+  34          #define KEY_DOWN 1  //有按键按下状态，判断是否为抖动
+  35          #define KEY_UP   2  //等待松手状态，判断是否弹起
+  36          u8 ucKBD_Read_State()
+  37          {
+  38   1              static u8 key_state = 0;           // 定义key_state为静态变量，用于保存每次按键的状态
+  39   1              u8 key_io = 0, key_retrun = 0; // key_io:读取的IO状态, key_retrun:返回的键值;
+  40   1              
+  41   1              key_io = ucKBD_KeyIO_State();
+  42   1              switch(key_state) 
+  43   1              {       
+  44   2                      case KEY_NO:                                                                    //无按键状态，用于判断是否按下
+  45   2                              if(key_io) key_state = KEY_DOWN; 
+  46   2                      break; 
+  47   2      
+  48   2                      case KEY_DOWN:                                                                  //有按键按下状态，判断是否为抖动
+  49   2                              if(key_io)
+  50   2                              {
+  51   3                                      key_state = KEY_UP;
+  52   3                                      key_retrun = key_io;
+  53   3                              } 
+  54   2                              else 
+C51 COMPILER V9.56.0.0   KBD                                                               09/15/2025 18:19:18 PAGE 2   
+
+  55   2                                      key_state = KEY_NO;  
+  56   2                      break;  
+  57   2                      
+  58   2                      case KEY_UP:                                                                    //等待松手状态，判断是否弹起
+  59   2                              if(key_io==0) key_state = KEY_NO; 
+  60   2                      break; 
+  61   2              } 
+  62   1              return key_retrun; 
+  63   1      }
+  64          
+  65          
+  66          
+  67          /**
+  68            * @brief  矩阵键盘 - 获取键值
+  69            * @param  None
+  70            * @retval key_io: 当前按键的键值，按下“位”为低电平
+  71            * @author dianshe.taobao.com
+  72            */
+  73          u8 ucKBD_KeyIO_ThreeLine()
+  74          {
+  75   1              u8 key_io = 0xff;
+  76   1              P3=0xf0;P4=0xff;        //列扫描
+  77   1              if(P44==0) key_io=0x70;
+  78   1              if(P42==0) key_io=0xb0;
+  79   1              if(P35==0) key_io=0xd0;
+  80   1              if(P34==0) key_io=0xe0;
+  81   1      
+  82   1              P3=0x0f;P4=0x00;        //行扫描
+  83   1              if(P33==0) key_io=key_io | 0x07;
+  84   1              if(P32==0) key_io=key_io | 0x0b;
+  85   1              if(P31==0)key_io=key_io | 0x0d;
+  86   1              if(P30==0) key_io=key_io | 0x0e;
+  87   1              
+  88   1              return key_io;
+  89   1      }
+  90          
+  91          /**
+  92            * @brief  矩阵键盘 - 三行按键法
+  93            * @param  None
+  94            * @retval None
+  95            * @author dianshe.taobao.com
+  96            */
+  97          unsigned char Trg_KBD; 
+  98          unsigned char Cont_KBD; 
+  99          void vKBD_Read_ThreeLine() 
+ 100          { 
+ 101   1          unsigned char ReadData = ucKBD_KeyIO_ThreeLine() ^ 0xff;  
+ 102   1          Trg_KBD  = ReadData & (ReadData ^ Cont_KBD); 
+ 103   1          Cont_KBD = ReadData; 
+ 104   1      } 
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    171    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      3    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+C51 COMPILER V9.56.0.0   KBD                                                               09/15/2025 18:19:18 PAGE 3   
+
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

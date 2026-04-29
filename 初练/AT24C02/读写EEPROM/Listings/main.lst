@@ -1,0 +1,118 @@
+C51 COMPILER V9.56.0.0   MAIN                                                              09/08/2025 17:58:02 PAGE 1   
+
+
+C51 COMPILER V9.56.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: D:\keil c51v956\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\Library\System;.\Library\D
+                    -evice) DEBUG OBJECTEXTEND PRINT(.\Listings\main.lst) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include "system.h"
+   2          
+   3          HexToBin led_ctrl,uln_ctrl;
+   4          
+   5          void vSystem_Init(void)
+   6          {
+   7   1              vDevice_Ctrl(0xa0,0);
+   8   1              led_ctrl.hex=0xff;
+   9   1              vDevice_Ctrl(0x80,led_ctrl.hex);        
+  10   1      }
+  11          
+  12          u16 u16_write = 1234;
+  13          u16 u16_read = 0;
+  14          
+  15          float float_write = 3.1415;
+  16          float float_read = 0;
+  17          
+  18          s8 minus_write = -23;
+  19          s8 minus_read = 0;
+  20          
+  21          s16 minus_s16_write = -1234;
+  22          s16 minus_s16_read = 0;
+  23          
+  24          u8 str_write[11]={"hello world"};
+  25          u8 str_read[11];
+  26          void vEEPROM_Process()
+  27          {
+  28   1              u8 i = 0;
+  29   1              
+  30   1              vWrite_EEPROM(0x00,u16_write>>8);
+  31   1              vWrite_EEPROM(0x01,u16_write);
+  32   1              u16_read = (ucRead_EEPROM(0x00)<<8)+ucRead_EEPROM(0x01);
+  33   1              
+  34   1              vWrite_EEPROM(0x03,(u16)(float_write*1000)/256);
+  35   1              vWrite_EEPROM(0x04,(u16)(float_write*1000)%256);
+  36   1              float_read = (ucRead_EEPROM(0x03)*256+ucRead_EEPROM(0x04))/1000.0f;
+  37   1              
+  38   1      //      if(minus_write<0)
+  39   1      //      {
+  40   1      //              vWrite_EEPROM(0x06,'-');
+  41   1      //              vWrite_EEPROM(0x07,-minus_write);
+  42   1      //      }
+  43   1      //      if(ucRead_EEPROM(0x06=='-')
+  44   1      //      {
+  45   1      //              minus_read = 0 - ucRead_EEPROM(0x07);
+  46   1      //      }
+  47   1              
+  48   1              vWrite_EEPROM(0x06,minus_write);
+  49   1              minus_read = ucRead_EEPROM(0x06);
+  50   1              
+  51   1              vWrite_EEPROM(0x08,minus_s16_write>>8);
+  52   1              vWrite_EEPROM(0x09,minus_s16_write);
+  53   1              minus_s16_read = (ucRead_EEPROM(0x08)<<8)+ucRead_EEPROM(0x09);
+  54   1              
+C51 COMPILER V9.56.0.0   MAIN                                                              09/08/2025 17:58:02 PAGE 2   
+
+  55   1              for(i=0;i<sizeof(str_write);i++)
+  56   1              {
+  57   2                      vWrite_EEPROM(0x10+i,str_write[i]);
+  58   2              }
+  59   1              for(i=0;i<sizeof(str_write);i++)
+  60   1              {
+  61   2                      str_read[i]=ucRead_EEPROM(0x10+i);
+  62   2              }
+  63   1      }
+  64          
+  65          void vSMG_Process()
+  66          {
+  67   1              smg_buf[0]=0x00;
+  68   1              smg_buf[1]=0x00;
+  69   1              smg_buf[2]=0x00;
+  70   1              smg_buf[3]=0x00;
+  71   1              smg_buf[4]=0x00;
+  72   1              smg_buf[5]=0x00;
+  73   1              smg_buf[6]=0x00;
+  74   1              smg_buf[7]=0x00;
+  75   1      }
+  76          
+  77          void main(void)
+  78          {
+  79   1              vSystem_Init();
+  80   1              vEEPROM_Process();
+  81   1              vTimer2_Init();
+  82   1              while(1)
+  83   1              {
+  84   2                      vSMG_Process();
+  85   2              }
+  86   1      }
+  87          
+  88          //中断服务程序
+  89          void vTimer2_ISR() interrupt 12     //中断入口
+  90          {
+  91   1              vSMG_Display();
+  92   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    383    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     42       1
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

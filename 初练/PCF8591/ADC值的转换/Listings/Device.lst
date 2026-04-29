@@ -1,0 +1,43 @@
+C51 COMPILER V9.56.0.0   DEVICE                                                            04/07/2021 23:26:11 PAGE 1   
+
+
+C51 COMPILER V9.56.0.0, COMPILATION OF MODULE DEVICE
+OBJECT MODULE PLACED IN .\Objects\Device.obj
+COMPILER INVOKED BY: D:\Keil_c51\C51\BIN\C51.EXE Library\Device\Device.c OMF2 OPTIMIZE(8,SPEED) REGFILE(.\Objects\IAP15_
+                    -Project.ORC) BROWSE INCDIR(.\Library\System;.\Library\Device) DEBUG PRINT(.\Listings\Device.lst) OBJECT(.\Objects\Device
+                    -.obj)
+
+line level    source
+
+   1          #include "Device.h"
+   2          
+   3          /**
+   4            * @brief  外设控制函数，P2=0xa0（选通Y5C，控制ULN2003）；P2=0x80（选通Y4C，控制LED灯）
+   5            * @param  None
+   6            * @retval None
+   7            * @author dianshe.taobao.com
+   8            */
+   9          void vDevice_Ctrl(unsigned char p2data,unsigned char p0data)
+  10          {
+  11   1              P0 = p0data;
+  12   1              P2 = P2 & 0x1f | p2data;
+  13   1              P2 &= 0x1f;
+  14   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     13    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

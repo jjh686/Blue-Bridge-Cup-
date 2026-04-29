@@ -1,0 +1,7 @@
+".\Objects\STARTUP.obj",
+".\Objects\main.obj",
+".\Objects\Timer.obj",
+".\Objects\p2p0.obj",
+".\Objects\kbd.obj" 
+TO ".\Objects\A" 
+PRINT(".\Listings\A.m51") RAMSIZE(256) 

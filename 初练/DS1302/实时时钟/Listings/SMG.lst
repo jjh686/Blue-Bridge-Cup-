@@ -1,0 +1,46 @@
+C51 COMPILER V9.56.0.0   SMG                                                               09/10/2025 23:02:25 PAGE 1   
+
+
+C51 COMPILER V9.56.0.0, COMPILATION OF MODULE SMG
+OBJECT MODULE PLACED IN .\Objects\SMG.obj
+COMPILER INVOKED BY: D:\keil c51v956\C51\BIN\C51.EXE Library\Device\SMG.c OMF2 OPTIMIZE(8,SPEED) REGFILE(.\Objects\IAP15
+                    -_Project.ORC) BROWSE INCDIR(.\Library\System;.\Library\Device) DEBUG PRINT(.\Listings\SMG.lst) OBJECT(.\Objects\SMG.obj)
+
+line level    source
+
+   1          #include "SMG.h"
+   2          
+   3          u8 smg_buf[8];  //数码管显示缓存区
+   4          u8 code smg_code[]={0x3F,0x06,0x5B,0x4F,0x66,0x6D,0x7D,0x07,0x7F,0x6F}; //共阴数码管码表
+   5          /**
+   6            * @brief  数码管显示函数
+   7            * @param  None
+   8            * @retval None
+   9            * @author dianshe.taobao.com
+  10            */
+  11          void vSMG_Display()
+  12          {
+  13   1              static u8 i=0;
+  14   1              vDevice_Ctrl(0xc0,0);
+  15   1              vDevice_Ctrl(0xe0,~smg_buf[i]);
+  16   1              vDevice_Ctrl(0xc0,0x01<<i);
+  17   1              i = (i + 1) % 8;
+  18   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     47    ----
+   CONSTANT SIZE    =     10    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      9    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,7 @@
+".\Objects\STARTUP.obj",
+".\Objects\main.obj",
+".\Objects\device.obj",
+".\Objects\kbd.obj",
+".\Objects\Timer.obj" 
+TO ".\Objects\2025_11_16" 
+PRINT(".\Listings\2025_11_16.m51") RAMSIZE(256) 

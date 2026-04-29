@@ -1,0 +1,105 @@
+C51 COMPILER V9.56.0.0   KBD                                                               09/07/2025 13:04:00 PAGE 1   
+
+
+C51 COMPILER V9.56.0.0, COMPILATION OF MODULE KBD
+OBJECT MODULE PLACED IN .\Objects\KBD.obj
+COMPILER INVOKED BY: D:\keil c51v956\C51\BIN\C51.EXE Library\Device\KBD.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\Library\Syst
+                    -em;.\Library\Device) DEBUG OBJECTEXTEND PRINT(.\Listings\KBD.lst) OBJECT(.\Objects\KBD.obj)
+
+line level    source
+
+   1          #include "KBD.h"
+   2          
+   3          #define KEY_NO 0
+   4          #define KEY_DOWN 1
+   5          #define KEY_UP 2
+   6          
+   7          u8 vKBD_KeyIO_State()
+   8          {
+   9   1              u8 key_io = 0;
+  10   1              P3=0xf0;P4=0xff;
+  11   1              if(P44==0) key_io=4;
+  12   1              if(P42==0) key_io=8;
+  13   1              if(P35==0) key_io=12;
+  14   1              if(P34==0) key_io=16;
+  15   1              
+  16   1              P3=0x0f;P4=0x00;
+  17   1              if(P33==0) key_io+=0;
+  18   1              if(P32==0) key_io+=1;
+  19   1              if(P31==0) key_io+=2;
+  20   1              if(P30==0) key_io+=3;
+  21   1              
+  22   1              return key_io;
+  23   1      }
+  24          
+  25          u8 vKBD_KeyIO_ThreeLine()
+  26          {
+  27   1              u8 key_io = 0xff;
+  28   1              P3=0xf0;P4=0xff;
+  29   1              if(P44==0) key_io=0x70;
+  30   1              if(P42==0) key_io=0xb0;
+  31   1              if(P35==0) key_io=0xd0;
+  32   1              if(P34==0) key_io=0xe0;
+  33   1              
+  34   1              P3=0x0f;P4=0x00;
+  35   1              if(P33==0) key_io=key_io | 0x07;
+  36   1              if(P32==0) key_io=key_io | 0x0b;
+  37   1              if(P31==0) key_io=key_io | 0x0d;
+  38   1              if(P30==0) key_io=key_io | 0x0e;
+  39   1              
+  40   1              return key_io;
+  41   1      }
+  42          
+  43          u8 vKBD_Read_State()
+  44          {
+  45   1              static u8 key_state = 0;
+  46   1              u8 key_io = 0, key_return = 0;
+  47   1              
+  48   1              key_io = vKBD_KeyIO_State();
+  49   1              switch(key_state)
+  50   1              {
+  51   2                      case KEY_NO:
+  52   2                              if(key_io) key_state = KEY_DOWN;
+  53   2                      break;
+  54   2                      
+C51 COMPILER V9.56.0.0   KBD                                                               09/07/2025 13:04:00 PAGE 2   
+
+  55   2                      case KEY_DOWN:
+  56   2                              if(key_io)
+  57   2                              {
+  58   3                                      key_state = KEY_UP;
+  59   3                                      key_return = key_io;
+  60   3                              }
+  61   2                              else
+  62   2                                      key_state = KEY_NO;
+  63   2                      break;
+  64   2                              
+  65   2                      case KEY_UP:
+  66   2                              if(key_io==0) key_state = KEY_NO;
+  67   2                      break;
+  68   2              }
+  69   1              return key_return;
+  70   1      }
+  71          
+  72          unsigned char Trg_KBD;
+  73          unsigned char Cont_KBD;
+  74          void vKBD_Read_ThreeLine()
+  75          {
+  76   1              unsigned char ReadData = vKBD_KeyIO_ThreeLine() ^ 0xff;
+  77   1              Trg_KBD = ReadData & (ReadData ^ Cont_KBD);
+  78   1              Cont_KBD = ReadData;
+  79   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    171    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      3    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

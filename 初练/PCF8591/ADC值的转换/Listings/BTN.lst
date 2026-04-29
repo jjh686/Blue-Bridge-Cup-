@@ -1,0 +1,89 @@
+C51 COMPILER V9.56.0.0   BTN                                                               04/07/2021 23:26:11 PAGE 1   
+
+
+C51 COMPILER V9.56.0.0, COMPILATION OF MODULE BTN
+OBJECT MODULE PLACED IN .\Objects\BTN.obj
+COMPILER INVOKED BY: D:\Keil_c51\C51\BIN\C51.EXE Library\Device\BTN.c OMF2 OPTIMIZE(8,SPEED) REGFILE(.\Objects\IAP15_Pro
+                    -ject.ORC) BROWSE INCDIR(.\Library\System;.\Library\Device) DEBUG PRINT(.\Listings\BTN.lst) OBJECT(.\Objects\BTN.obj)
+
+line level    source
+
+   1          #include "BTN.h"
+   2          
+   3          /**
+   4            * @brief  独立按键 - 状态机法
+   5            * @param  None
+   6            * @retval key_retrun: 按键的键值，单次触发
+   7            * @author dianshe.taobao.com
+   8            */
+   9          #define KEY_NO   0  //无按键状态，用于判断是否按下
+  10          #define KEY_DOWN 1  //有按键按下状态，判断是否为抖动
+  11          #define KEY_UP   2  //等待松手状态，判断是否弹起
+  12          u8 ucBTN_Read_State(void)                               //10ms执行一次
+  13          { 
+  14   1              static u8 key_state = 0;           //定义key_state为静态变量，用于保存每次按键的状态
+  15   1              u8 key_io = 0, key_retrun = 0; //key_io:读取的IO状态; key_retrun:返回的键值;
+  16   1              
+  17   1              key_io = P3 & 0x0f;             //对P3读回来的高4位IO清零，屏蔽不关心的IO状态
+  18   1              switch(key_state) 
+  19   1              {       
+  20   2                      case KEY_NO:                                                                    //无按键状态，用于判断是否按下
+  21   2                              if(key_io!=0x0f) key_state = KEY_DOWN; 
+  22   2                      break; 
+  23   2      
+  24   2                      case KEY_DOWN:                                                                  //有按键按下状态，判断是否为抖动
+  25   2                              if(key_io!=0x0f)
+  26   2                              { 
+  27   3                                      key_state = KEY_UP; 
+  28   3                                      
+  29   3                                      if(key_io==0x0e) key_retrun = 7;        //S7
+  30   3                                      if(key_io==0x0d) key_retrun = 6;        //S6
+  31   3                                      if(key_io==0x0b) key_retrun = 5;        //S5
+  32   3                                      if(key_io==0x07) key_retrun = 4;        //S4
+  33   3                              } 
+  34   2                              else 
+  35   2                                      key_state = KEY_NO;  
+  36   2                      break;  
+  37   2                      
+  38   2                      case KEY_UP:                                                                    //等待松手状态，判断是否弹起
+  39   2                              if(key_io==0x0f) key_state = KEY_NO; 
+  40   2                      break; 
+  41   2              } 
+  42   1              return key_retrun; 
+  43   1      } 
+  44          
+  45          
+  46          /**
+  47            * @brief  独立按键 - 三行按键法
+  48            * @param  None
+  49            * @retval None
+  50            * @author dianshe.taobao.com
+  51            */
+  52          unsigned char Trg_BTN;
+  53          unsigned char Cont_BTN;
+  54          void vBTN_Read_ThreeLine(void)
+C51 COMPILER V9.56.0.0   BTN                                                               04/07/2021 23:26:11 PAGE 2   
+
+  55          {
+  56   1          unsigned char ReadData = P3^0xff;
+  57   1          Trg_BTN = ReadData & (ReadData ^ Cont_BTN);
+  58   1          Cont_BTN = ReadData;
+  59   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     80    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      3    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

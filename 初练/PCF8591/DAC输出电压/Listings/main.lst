@@ -1,0 +1,119 @@
+C51 COMPILER V9.56.0.0   MAIN                                                              09/15/2025 18:19:18 PAGE 1   
+
+
+C51 COMPILER V9.56.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: D:\keil c51v956\C51\BIN\C51.EXE main.c OMF2 OPTIMIZE(8,SPEED) REGFILE(.\Objects\IAP15_Project.ORC) 
+                    -BROWSE INCDIR(.\Library\System;.\Library\Device) DEBUG PRINT(.\Listings\main.lst) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          /*************************************************
+   2          File name:       【PCF8591】DAC输出电压
+   3          Description: 
+   4                          学会DAC输出电压的函数
+   5          
+   6          Copyright (c) 电子设计工坊 dianshe.taobao.com
+   7          All rights reserved
+   8          *************************************************/
+   9          #include "system.h"
+  10          HexToBin led_ctrl,uln_ctrl;
+  11          
+  12          /*
+  13            * @brief  系统初始化函数：关闭继电器、蜂鸣器
+  14            * @param  None
+  15            * @retval None
+  16            * @author dianshe.taobao.com
+  17            */
+  18          void vSystem_Init(void)
+  19          {
+  20   1              vDevice_Ctrl(0xa0,0);                           /* 关闭蜂鸣器、继电器*/
+  21   1              led_ctrl.hex=0xff;
+  22   1              vDevice_Ctrl(0x80,led_ctrl.hex);        /* 关闭LED*/
+  23   1      }
+  24          //ADC采样
+  25          u8 cnt_adc;
+  26          u8 ch0,ch1,ch3;
+  27          u16 ch3_volt;
+  28          u8 ch3_0_99,ch3_1_5;
+  29          void vADC_Process()
+  30          {
+  31   1              if(cnt_adc>=10)
+  32   1              {
+  33   2                      cnt_adc=0;
+  34   2                      ucRead_ADC(0x41);
+  35   2                      ch1 = ucRead_ADC(0x41);                 //光敏电阻的AD值 - 通道1
+  36   2                      ucRead_ADC(0x43);
+  37   2                      ch3 = ucRead_ADC(0x43);                 //旋转电位器的AD值 - 通道3
+  38   2                      
+  39   2                      ch3_volt = ch3*100/51;                  // 0~255 --> 0~500
+  40   2                      ch3_0_99 = ch3/2.57f;                   // 0~255 --> 0~99
+  41   2                      ch3_1_5 = ch3/51.1f + 1;
+  42   2              }
+  43   1      }
+  44          
+  45          //DAC输出
+  46          u8 cnt_dac;
+  47          void vDAC_Process()
+  48          {
+  49   1              static u8 dac_val=0;
+  50   1              if(cnt_dac>=2)
+  51   1              {
+  52   2                      cnt_dac=0;
+  53   2                      vWrite_DAC(dac_val++);
+  54   2              }
+C51 COMPILER V9.56.0.0   MAIN                                                              09/15/2025 18:19:18 PAGE 2   
+
+  55   1      }
+  56          
+  57          //数码管操作函数
+  58          void vSMG_Process()
+  59          {
+  60   1              smg_buf[0]=smg_code[ch3_volt/100]|0x80;                 //旋转电位器的电压值
+  61   1              smg_buf[1]=smg_code[ch3_volt/10%10];    
+  62   1              smg_buf[2]=smg_code[ch3_volt%10];
+  63   1              smg_buf[3]=0x00;
+  64   1              smg_buf[4]=smg_code[ch3_0_99/10];
+  65   1              smg_buf[5]=smg_code[ch3_0_99%10];               
+  66   1              smg_buf[6]=0x00;
+  67   1              smg_buf[7]=smg_code[ch3_1_5];
+  68   1      }
+  69          
+  70          void main(void)
+  71          {
+  72   1              vSystem_Init();
+  73   1              vTimer2_Init();
+  74   1              while(1)
+  75   1              {
+  76   2                      vSMG_Process();
+  77   2                      vADC_Process();
+  78   2                      vDAC_Process();
+  79   2              }
+  80   1      }
+  81          
+  82          
+  83          //中断服务程序
+  84          void vTimer2_ISR() interrupt 12         //中断入口
+  85          {
+  86   1              cnt_adc++;
+  87   1              cnt_dac++;
+  88   1              vSMG_Display();
+  89   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    313    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     12    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

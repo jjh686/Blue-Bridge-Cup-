@@ -1,0 +1,178 @@
+C51 COMPILER V9.56.0.0   MAIN                                                              09/02/2025 15:31:40 PAGE 1   
+
+
+C51 COMPILER V9.56.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: D:\keil c51v956\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\Library\System;.\Library\D
+                    -evice) DEBUG OBJECTEXTEND PRINT(.\Listings\main.lst) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include "system.h"
+   2          #include <intrins.h>
+   3          #include "Delay.h"
+   4          #include "Device.h"
+   5          u8 code smg_code[]={0x3F,0x06,0x5B,0x4F,0x66,0x6D,0x7D,0x07,0x7F,0x6F,0x76,0x79,0x38};
+   6          
+   7          HexToBin led_ctrl,uln_ctrl;
+   8          
+   9          void vSystem_Init(void)
+  10          {
+  11   1              vDevice_Ctrl(0xa0,0);
+  12   1              led_ctrl.hex=0xff;
+  13   1              vDevice_Ctrl(0x80,led_ctrl.hex);        
+  14   1      }
+  15          
+  16          void vTimer2_Init(void)         //1毫秒@12.000MHz
+  17          {
+  18   1              AUXR &= 0xFB;           //定时器时钟12T模式
+  19   1              T2L = 0x18;                     //设置定时初值
+  20   1              T2H = 0xFC;                     //设置定时初值
+  21   1              AUXR |= 0x10;           //定时器2开始计时
+  22   1              IE2 |= 0x04;                    //开定时器2中断
+  23   1              EA = 1;
+  24   1      }
+  25          
+  26          #define KEY_NO   0
+  27          #define KEY_DOWN 1
+  28          #define KEY_UP   2
+  29          
+  30          u8 vBTN_Read_State(void)
+  31          {
+  32   1              static u8 key_state = 0;
+  33   1              u8 key_io = 0, key_val = 0;
+  34   1              
+  35   1              key_io = P3 & 0x0f;
+  36   1              switch(key_state)
+  37   1              {
+  38   2                      case KEY_NO:
+  39   2                              if(key_io!=0x0f) key_state = KEY_DOWN;
+  40   2                      break;
+  41   2                      
+  42   2                      case KEY_DOWN:
+  43   2                              if(key_io!=0x0f)
+  44   2                              {
+  45   3                                      if(key_io==0x0e) key_val = 7;
+  46   3                                      if(key_io==0x0d) key_val = 6;
+  47   3                                      if(key_io==0x0b) key_val = 5;
+  48   3                                      if(key_io==0x07) key_val = 4;
+  49   3                                      key_state = KEY_UP;
+  50   3                              }
+  51   2                              else
+  52   2                                      key_state = KEY_NO;
+  53   2                      break;
+  54   2                              
+C51 COMPILER V9.56.0.0   MAIN                                                              09/02/2025 15:31:40 PAGE 2   
+
+  55   2                      case KEY_UP:
+  56   2                              if(key_io==0x0f) key_state = KEY_NO;
+  57   2                      break;
+  58   2              }
+  59   1              return key_val;
+  60   1      }
+  61          
+  62          unsigned char Trg;
+  63          unsigned char Cont;
+  64          void vBTN_Read_ThreeLine( void )
+  65          {
+  66   1              unsigned char ReadData = P3^0xff;
+  67   1              Trg = ReadData & (ReadData ^ Cont);
+  68   1              Cont = ReadData;
+  69   1      }
+  70          
+  71          u8 cnt_key;
+  72          u8 s4_number;
+  73          void vBTN_State_Process(void)
+  74          {
+  75   1              u8 key_val;
+  76   1              if(cnt_key>=10)
+  77   1              {
+  78   2                      cnt_key=0;
+  79   2                      key_val = vBTN_Read_State();
+  80   2                      if(key_val==4)
+  81   2                      {
+  82   3                              s4_number++;
+  83   3                      }
+  84   2              }
+  85   1      }
+  86          
+  87          void vBTN_ThreeLine_Process(void)
+  88          {
+  89   1              if(cnt_key>=10)
+  90   1              {
+  91   2                      cnt_key=0;
+  92   2                      vBTN_Read_ThreeLine();
+  93   2                      if(Trg & 0x08)
+  94   2                      {
+  95   3                              s4_number++;
+  96   3                      }
+  97   2                      if(Trg & 0x04)
+  98   2                      {
+  99   3                              s4_number--;
+ 100   3                      }
+ 101   2                      if(Trg & 0x02)
+ 102   2                      {
+ 103   3                              s4_number+=10;
+ 104   3                      }
+ 105   2                      if(Trg & 0x01)
+ 106   2                      {
+ 107   3                              s4_number-=10;
+ 108   3                      }
+ 109   2              }
+ 110   1      }
+ 111          
+ 112          u8 smg_buf[8];
+ 113          void vSMG_Process()
+ 114          {
+ 115   1              smg_buf[0]=smg_code[s4_number/100];
+ 116   1              smg_buf[1]=smg_code[s4_number/10%10];
+C51 COMPILER V9.56.0.0   MAIN                                                              09/02/2025 15:31:40 PAGE 3   
+
+ 117   1              smg_buf[2]=smg_code[s4_number%10];
+ 118   1              smg_buf[3]=0x00;
+ 119   1              smg_buf[4]=0x00;
+ 120   1              smg_buf[5]=0x00;
+ 121   1              smg_buf[6]=0x00;
+ 122   1              smg_buf[7]=0x00;
+ 123   1      }
+ 124          
+ 125          void main(void)
+ 126          {
+ 127   1              vSystem_Init();
+ 128   1              vTimer2_Init();
+ 129   1              while(1)
+ 130   1              {
+ 131   2                      vSMG_Process();
+ 132   2                      vBTN_ThreeLine_Process();
+ 133   2              }
+ 134   1      }
+ 135          
+ 136          void vSMG_Display()
+ 137          {
+ 138   1              static u8 i=0;
+ 139   1              vDevice_Ctrl(0xc0,0);
+ 140   1              vDevice_Ctrl(0xe0,~smg_buf[i]);
+ 141   1              vDevice_Ctrl(0xc0,0x01<<i);
+ 142   1              i = (i + 1) % 8;
+ 143   1      }
+ 144          
+ 145          //中断服务程序
+ 146          void vTimer2_ISR() interrupt 12     //中断入口
+ 147          {
+ 148   1              cnt_key++;
+ 149   1              vSMG_Display();
+ 150   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    356    ----
+   CONSTANT SIZE    =     13    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     16    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

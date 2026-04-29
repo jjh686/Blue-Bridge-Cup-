@@ -1,0 +1,506 @@
+C51 COMPILER V9.56.0.0   MAIN                                                              09/01/2025 15:50:00 PAGE 1   
+
+
+C51 COMPILER V9.56.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: D:\keil c51v956\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\Library\System;.\Library\D
+                    -evice) DEBUG OBJECTEXTEND PRINT(.\Listings\main.lst) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include "system.h"
+   2          #include "Delay.h" 
+   3          #include "intrins.h"
+   4          #include "Device.h"
+   5          
+   6          //Delay软件延时
+   7          //void main(void)
+   8          //{
+   9          //      
+  10          //      
+  11          //      while(1)
+  12          //      {
+  13          //              P34 = 1;
+  14          //              vDelay_Ms(1);
+  15          //              vDelay_100us(5);
+  16          //              P34 = 0;
+  17          //              vDelay_100us(5);
+  18          //      }
+  19          //}
+  20          
+  21          //继电器与蜂鸣器程序控制（位控制）
+  22          //sbit bRelay = P0^4;                           //继电器
+  23          //sbit bBuzzer = P0^6;                  //蜂鸣器
+  24          
+  25          //void vSystem_Init(void)
+  26          //{
+  27          //      bRelay=1;                                       //开
+  28          //      bBuzzer=0;                                      //关
+  29          //      P27=1;P26=0;P25=1;                      //选通译码器，开锁存器
+  30          //      P27=0;P26=0;P25=0;                      //选通译码器，关锁存器
+  31          //}
+  32          
+  33          //void main(void)
+  34          //{
+  35          //      vSystem_Init();
+  36          //      while(1)
+  37          //      {
+  38          //              
+  39          //      }
+  40          //}
+  41          
+  42          //继电器与蜂鸣器程序控制（字节控制）
+  43          //void vSystem_Init(void)
+  44          //{
+  45          ////    P0=0x01<<6;             //P06输出高电平，P04输出低电平
+  46          //      P0=0x40;                //P06输出高电平，P04输出低电平
+  47          //      P2=0xa0;                //打开锁存器
+  48          //      P2=0;                   //关闭锁存器
+  49          //}
+  50          
+  51          //void main(void)
+  52          //{
+  53          //      vSystem_Init();
+  54          //      while(1)
+C51 COMPILER V9.56.0.0   MAIN                                                              09/01/2025 15:50:00 PAGE 2   
+
+  55          //      {
+  56          //              
+  57          //      }
+  58          //}
+  59          
+  60          //继电器与蜂鸣器程序控制（标志位控制）
+  61          //unsigned char buzzer_ctrl;
+  62          //unsigned char relay_ctrl;
+  63          
+  64          //void vSystem_Init(void)
+  65          //{
+  66          //      buzzer_ctrl=0;          
+  67          //      relay_ctrl=1;
+  68          //      P0=(buzzer_ctrl<<6)|(relay_ctrl<<4);
+  69          //      P2=0xa0;                //打开锁存器
+  70          //      P2=0;                   //关闭锁存器
+  71          //}
+  72          
+  73          //void main(void)
+  74          //{
+  75          //      vSystem_Init();
+  76          //      while(1)
+  77          //      {
+  78          //              
+  79          //      }
+  80          //}
+  81          
+  82          //继电器与蜂鸣器程序控制（间接开关）    
+  83          //unsigned char buzzer_ctrl;
+  84          //unsigned char relay_ctrl;
+  85          
+  86          //void vSystem_Init(void)
+  87          //{
+  88          //      buzzer_ctrl=0;          
+  89          //      relay_ctrl=1;
+  90          //      vDevice_Ctrl(0xa0,(buzzer_ctrl<<6)|(relay_ctrl<<4));
+  91          //}
+  92          
+  93          //void main(void)
+  94          //{
+  95          //      vSystem_Init();
+  96          //      while(1)
+  97          //      {
+  98          //              buzzer_ctrl=1;
+  99          //              vDevice_Ctrl(0xa0,(buzzer_ctrl<<6)|(relay_ctrl<<4));
+ 100          //              vDelay_Ms(500);
+ 101          //              buzzer_ctrl=0;
+ 102          //              vDevice_Ctrl(0xa0,(buzzer_ctrl<<6)|(relay_ctrl<<4));
+ 103          //              vDelay_Ms(500);         
+ 104          //      }
+ 105          //}
+ 106          
+ 107          //LED（点亮指定LED）    
+ 108          //void vSystem_Init(void)
+ 109          //{
+ 110          //      vDevice_Ctrl(0xa0,0);           //关闭继电器与蜂鸣器    
+ 111          //}
+ 112          
+ 113          //void main(void)
+ 114          //{
+ 115          //      vSystem_Init();
+ 116          //      vDevice_Ctrl(0x80,0x3a);                //点亮L1,L3,L7,L8
+C51 COMPILER V9.56.0.0   MAIN                                                              09/01/2025 15:50:00 PAGE 3   
+
+ 117          //      vDevice_Ctrl(0x80,0xaa);                //点亮L1,L3,L5,L7
+ 118          //      while(1)
+ 119          //      {
+ 120          //                      
+ 121          //      }
+ 122          //}
+ 123          
+ 124          //LED（变量位操作）     
+ 125          //unsigned char led_ctrl[9];
+ 126          
+ 127          //void vSystem_Init(void)
+ 128          //{
+ 129          //      vDevice_Ctrl(0xa0,0);           //关闭继电器与蜂鸣器    
+ 130          //}
+ 131          
+ 132          //void main(void)
+ 133          //{
+ 134          //      vSystem_Init();
+ 135          //      led_ctrl[1]=1;led_ctrl[3]=1;led_ctrl[7]=1;led_ctrl[8]=1;
+ 136          //      vDevice_Ctrl(0x80,~(led_ctrl[8]<<7 | led_ctrl[7]<<6 | led_ctrl[6]<<5 | led_ctrl[5]<<4 | led_ctrl[4]<<3 
+             -| led_ctrl[3]<<2 | led_ctrl[2]<<1 | led_ctrl[1]));
+ 137          //      while(1)
+ 138          //      {
+ 139          //                      
+ 140          //      }
+ 141          //}
+ 142          
+ 143          //LED（流水灯） 
+ 144          //unsigned char led_ctrl[9];
+ 145          
+ 146          //void vSystem_Init(void)
+ 147          //{
+ 148          //      vDevice_Ctrl(0xa0,0);           //关闭继电器与蜂鸣器    
+ 149          //}
+ 150          
+ 151          //void vLED_Running_L1_L8(void)
+ 152          //{
+ 153          //      static unsigned char led_shift=0;
+ 154          //      vDevice_Ctrl(0x80,~(0x01<<led_shift));
+ 155          //      led_shift++;
+ 156          //      if(led_shift==8)
+ 157          //              led_shift=0;
+ 158          //}
+ 159          
+ 160          //void vLED_Running_L8_L1(void)
+ 161          //{
+ 162          //      static unsigned char led_shift;
+ 163          //      vDevice_Ctrl(0x80,~(0x80>>led_shift));
+ 164          //      led_shift = (led_shift + 1) % 8;
+ 165          //}
+ 166          
+ 167          //void vLED_Running_L2_L4_L6_L8(void)
+ 168          //{
+ 169          //      static unsigned char led_shift;
+ 170          //      vDevice_Ctrl(0x80,~(0x02<<led_shift));
+ 171          //      led_shift = (led_shift + 2) % 8;
+ 172          //}
+ 173          
+ 174          
+ 175          //void main(void)
+ 176          //{
+ 177          //      vSystem_Init();
+C51 COMPILER V9.56.0.0   MAIN                                                              09/01/2025 15:50:00 PAGE 4   
+
+ 178          //      led_ctrl[1]=1;led_ctrl[3]=1;led_ctrl[7]=1;led_ctrl[8]=1;
+ 179          //      vDevice_Ctrl(0x80,~(led_ctrl[8]<<7 | led_ctrl[7]<<6 | led_ctrl[6]<<5 | led_ctrl[5]<<4 | led_ctrl[4]<<3 
+             -| led_ctrl[3]<<2 | led_ctrl[2]<<1 | led_ctrl[1]));
+ 180          //      while(1)
+ 181          //      {
+ 182          //              vLED_Running_L2_L4_L6_L8();
+ 183          //              vDelay_Ms(200);
+ 184          //      }
+ 185          //}
+ 186          
+ 187          //LED(利用共用体实现字节赋值和位赋值)
+ 188          //HexToBin led_ctrl,buzzer_ctrl;
+ 189          
+ 190          //void vSystem_Init(void)
+ 191          //{
+ 192          //      vDevice_Ctrl(0xa0,0);           //关闭继电器与蜂鸣器    
+ 193          //}
+ 194          
+ 195          //void main(void)
+ 196          //{
+ 197          //      vSystem_Init();
+ 198          //      led_ctrl.hex = 0x55;
+ 199          //      vDevice_Ctrl(0x80,led_ctrl.hex);
+ 200          //      
+ 201          //      buzzer_ctrl.b.b4 = 1;
+ 202          //      vDevice_Ctrl(0xa0,buzzer_ctrl.hex);
+ 203          //      while(1)
+ 204          //      {
+ 205          //              led_ctrl.b.b1 = 1;
+ 206          //              vDevice_Ctrl(0x80,led_ctrl.hex);
+ 207          //              vDelay_Ms(200);
+ 208          //              
+ 209          //              led_ctrl.b.b1 = 0;
+ 210          //              vDevice_Ctrl(0x80,led_ctrl.hex);
+ 211          //              vDelay_Ms(200);
+ 212          //      }
+ 213          //}
+ 214          
+ 215          ////定时器(定时器2编程)
+ 216          //HexToBin led_ctrl,uln_ctrl;
+ 217          //u16 cnt_buzzer;
+ 218          
+ 219          //void vSystem_Init(void)
+ 220          //{
+ 221          //      vDevice_Ctrl(0xa0,0);           //关闭继电器与蜂鸣器    
+ 222          //}
+ 223          
+ 224          //void vTimer2_Init(void)               //1毫秒@12.000MHz
+ 225          //{
+ 226          //      AUXR &= 0xFB;           //定时器时钟12T模式
+ 227          //      T2L = 0x18;             //设置定时初值
+ 228          //      T2H = 0xFC;             //设置定时初值
+ 229          //      AUXR |= 0x10;           //定时器2开始计时
+ 230          //      IE2 |= 0x04;        //开定时器2中断
+ 231          //      EA = 1;                         //开启总中断
+ 232          //}
+ 233          
+ 234          //void main(void)
+ 235          //{
+ 236          //      vSystem_Init();
+ 237          //      vTimer2_Init();
+ 238          
+C51 COMPILER V9.56.0.0   MAIN                                                              09/01/2025 15:50:00 PAGE 5   
+
+ 239          //      while(1)
+ 240          //      {
+ 241          
+ 242          //      }
+ 243          //}
+ 244          
+ 245          ////中断服务程序
+ 246          //void vTimer_ISR() interrupt 12           //中断入口
+ 247          //{
+ 248          //      //写法一：根据时间段
+ 249          ////    cnt_buzzer++;
+ 250          ////    if(cnt_buzzer<=200)
+ 251          ////    {
+ 252          ////            buzzer_ctrl.b.b6 = 1;
+ 253          ////            vDevice_Ctrl(0xa0,buzzer_ctrl.hex);
+ 254          ////    }
+ 255          ////    else if(cnt_buzzer<=400)
+ 256          ////    {
+ 257          ////            buzzer_ctrl.b.b6 = 0;
+ 258          ////            vDevice_Ctrl(0xa0,buzzer_ctrl.hex);             
+ 259          ////    }
+ 260          ////    else
+ 261          ////            cnt_buzzer=0;
+ 262          //      //写法二：根据时间点
+ 263          //      cnt_buzzer++;
+ 264          //      if(cnt_buzzer>=200)
+ 265          //      {
+ 266          //              cnt_buzzer=0;
+ 267          //              uln_ctrl.b.b6 = ~uln_ctrl.b.b6;
+ 268          //              vDevice_Ctrl(0xa0,uln_ctrl.hex);                
+ 269          //      }       
+ 270          //}
+ 271          
+ 272          ////定时器(综合练习)
+ 273          //HexToBin led_ctrl,uln_ctrl;
+ 274          
+ 275          //void vSystem_Init(void)
+ 276          //{
+ 277          //      vDevice_Ctrl(0xa0,0);           //关闭继电器与蜂鸣器    
+ 278          //      led_ctrl.hex=0xff;
+ 279          //      vDevice_Ctrl(0x80,led_ctrl.hex);                //关闭LED
+ 280          //}
+ 281          
+ 282          //void vTimer2_Init(void)               //1毫秒@12.000MHz
+ 283          //{
+ 284          //      AUXR &= 0xFB;           //定时器时钟12T模式
+ 285          //      T2L = 0x18;             //设置定时初值
+ 286          //      T2H = 0xFC;             //设置定时初值
+ 287          //      AUXR |= 0x10;           //定时器2开始计时
+ 288          //      IE2 |= 0x04;        //开定时器2中断
+ 289          //      EA = 1;                         //开启总中断
+ 290          //}
+ 291          
+ 292          ////LED操做函数
+ 293          //u16 cnt_led_blink,cnt_led_running;
+ 294          //u8 led_blink_times,led_shift;
+ 295          //void vLED_Process()
+ 296          //{
+ 297          //      if(cnt_led_blink>=500)
+ 298          //      {
+ 299          //              cnt_led_blink=0;
+ 300          //              led_ctrl.b.b0 = ~led_ctrl.b.b0;
+C51 COMPILER V9.56.0.0   MAIN                                                              09/01/2025 15:50:00 PAGE 6   
+
+ 301          //              vDevice_Ctrl(0x80,led_ctrl.hex);
+ 302          //              
+ 303          //              led_blink_times++;
+ 304          //      }
+ 305          //      
+ 306          //      if(cnt_led_running>=100)
+ 307          //      {
+ 308          //              cnt_led_running=0;
+ 309          //              led_ctrl.b.b3 = ~(0x01>>led_shift);
+ 310          //              led_ctrl.b.b4 = ~(0x02>>led_shift);
+ 311          //              led_ctrl.b.b5 = ~(0x04>>led_shift);
+ 312          //              led_ctrl.b.b6 = ~(0x08>>led_shift);
+ 313          //              led_ctrl.b.b7 = ~(0x10>>led_shift);
+ 314          //              vDevice_Ctrl(0x80,led_ctrl.hex);        
+ 315          
+ 316          //              led_shift++;
+ 317          //              if(led_shift==5)
+ 318          //                      led_shift=0;
+ 319          //      }
+ 320          //}
+ 321          
+ 322          ////继电器操做函数
+ 323          //void vULN_Process()
+ 324          //{
+ 325          //      if(led_blink_times==10)
+ 326          //      {
+ 327          //              uln_ctrl.b.b4 = 1;
+ 328          //              vDevice_Ctrl(0xa0,uln_ctrl.hex);
+ 329          //      }
+ 330          //      if(led_blink_times==20)
+ 331          //      {
+ 332          //              led_blink_times=0;
+ 333          //              uln_ctrl.b.b4 = 0;
+ 334          //              vDevice_Ctrl(0xa0,uln_ctrl.hex);
+ 335          //      }
+ 336          //}
+ 337          
+ 338          //void main(void)
+ 339          //{
+ 340          //      vSystem_Init();
+ 341          //      vTimer2_Init();
+ 342          
+ 343          //      while(1)
+ 344          //      {
+ 345          
+ 346          //      }
+ 347          //}
+ 348          
+ 349          ////中断服务程序
+ 350          //void vTimer_ISR() interrupt 12           //中断入口
+ 351          //{
+ 352          //      cnt_led_blink++;
+ 353          //      cnt_led_running++;
+ 354          //      vLED_Process();
+ 355          //      vULN_Process();
+ 356          
+ 357          //}
+ 358          
+ 359          ////数码管(动态显示)
+ 360          //u8 smg_code[]={0x3F,0x06,0x5B,0x4F,0x66,0x6D,0x7D,0x07,0x7F,0x6F,0x00,0x3E,0x73};
+ 361          
+ 362          //HexToBin led_ctrl,uln_ctrl;
+C51 COMPILER V9.56.0.0   MAIN                                                              09/01/2025 15:50:00 PAGE 7   
+
+ 363          
+ 364          //void vSystem_Init(void)
+ 365          //{
+ 366          //      vDevice_Ctrl(0xa0,0);           //关闭继电器与蜂鸣器    
+ 367          //      led_ctrl.hex=0xff;
+ 368          //      vDevice_Ctrl(0x80,led_ctrl.hex);                //关闭LED
+ 369          //}
+ 370          
+ 371          //void vTimer2_Init(void)               //1毫秒@12.000MHz
+ 372          //{
+ 373          //      AUXR &= 0xFB;           //定时器时钟12T模式
+ 374          //      T2L = 0x18;             //设置定时初值
+ 375          //      T2H = 0xFC;             //设置定时初值
+ 376          //      AUXR |= 0x10;           //定时器2开始计时
+ 377          //      IE2 |= 0x04;        //开定时器2中断
+ 378          //      EA = 1;                         //开启总中断
+ 379          //}
+ 380          
+ 381          //void main(void)
+ 382          //{
+ 383          //      vSystem_Init();
+ 384          //      vTimer2_Init();
+ 385          
+ 386          //      while(1)
+ 387          //      {
+ 388          
+ 389          //      }
+ 390          //}
+ 391          
+ 392          //void vSMG_Display()
+ 393          //{
+ 394          //      static u8 i=0;
+ 395          //      vDevice_Ctrl(0xe0,~smg_code[i]);
+ 396          //      vDevice_Ctrl(0xc0,0x01<<i);
+ 397          //      i = (i + 1) % 8;
+ 398          //}
+ 399          
+ 400          ////中断服务程序
+ 401          //void vTimer_ISR() interrupt 12           //中断入口
+ 402          //{
+ 403          //      vSMG_Display();
+ 404          //}
+ 405          
+ 406          //数码管(消除鬼影)
+ 407          u8 smg_code[]={0x3F,0x06,0x5B,0x4F,0x66,0x6D,0x7D,0x07,0x7F,0x6F,0x00,0x3E,0x73,0x76,0x79,0x38};
+ 408          
+ 409          HexToBin led_ctrl,uln_ctrl;
+ 410          
+ 411          void vSystem_Init(void)
+ 412          {
+ 413   1              vDevice_Ctrl(0xa0,0);           //关闭继电器与蜂鸣器    
+ 414   1              led_ctrl.hex=0xff;
+ 415   1              vDevice_Ctrl(0x80,led_ctrl.hex);                //关闭LED
+ 416   1      }
+ 417          
+ 418          void vTimer2_Init(void)         //1毫秒@12.000MHz
+ 419          {
+ 420   1              AUXR &= 0xFB;           //定时器时钟12T模式
+ 421   1              T2L = 0x18;             //设置定时初值
+ 422   1              T2H = 0xFC;             //设置定时初值
+ 423   1              AUXR |= 0x10;           //定时器2开始计时
+ 424   1              IE2 |= 0x04;        //开定时器2中断
+C51 COMPILER V9.56.0.0   MAIN                                                              09/01/2025 15:50:00 PAGE 8   
+
+ 425   1              EA = 1;                         //开启总中断
+ 426   1      }
+ 427          
+ 428          u8 smg_buf[8];
+ 429          
+ 430          void vSMG_Process()
+ 431          {
+ 432   1              smg_buf[0]=smg_code[13];
+ 433   1              smg_buf[1]=smg_code[14];
+ 434   1              smg_buf[2]=smg_code[15];
+ 435   1              smg_buf[3]=smg_code[15];
+ 436   1              smg_buf[4]=smg_code[0];
+ 437   1              smg_buf[5]=0x00;
+ 438   1              smg_buf[6]=0x00;
+ 439   1              smg_buf[7]=0x00;
+ 440   1      }
+ 441          
+ 442          void main(void)
+ 443          {
+ 444   1              vSystem_Init();
+ 445   1              vTimer2_Init();
+ 446   1      
+ 447   1              while(1)
+ 448   1              {
+ 449   2                      vSMG_Process();
+ 450   2              }
+ 451   1      }
+ 452          
+ 453          void vSMG_Display()
+ 454          {
+ 455   1              static u8 i=0;
+ 456   1              vDevice_Ctrl(0xc0,0);
+ 457   1              vDevice_Ctrl(0xe0,~smg_buf[i]);
+ 458   1              vDevice_Ctrl(0xc0,0x01<<i);
+ 459   1              i = (i + 1) % 8;
+ 460   1      }
+ 461          
+ 462          //中断服务程序
+ 463          void vTimer_ISR() interrupt 12           //中断入口
+ 464          {
+ 465   1              vSMG_Display();
+ 466   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    175    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     27    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

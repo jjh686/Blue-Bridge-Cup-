@@ -1,0 +1,214 @@
+C51 COMPILER V9.56.0.0   MAIN                                                              11/07/2025 17:56:13 PAGE 1   
+
+
+C51 COMPILER V9.56.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: D:\keil c51v956\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\library\device;.\library\s
+                    -ystem) DEBUG OBJECTEXTEND PRINT(.\Listings\main.lst) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include "system.h"
+   2          
+   3          u8 buzzer_ctrl;
+   4          
+   5          void system_init()
+   6          {
+   7   1              P2P0_ctrl(0xa0,0);
+   8   1              P2P0_ctrl(0x80,0xff);
+   9   1      }
+  10          
+  11          u8 seg_disp_mode;
+  12          u8 cnt_kbd;
+  13          u8 key_val;
+  14          u8 seg_find_mode;
+  15          void kbd_proc()
+  16          {
+  17   1              if(cnt_kbd>=10)
+  18   1              {
+  19   2                      cnt_kbd=0;
+  20   2                      key_val=kbd_read_state();
+  21   2                              if(key_val==4)
+  22   2                              {
+  23   3                                      seg_disp_mode=(seg_disp_mode+1)%3;
+  24   3                              }
+  25   2                              if(key_val==5)
+  26   2                              {
+  27   3                                      if(seg_disp_mode==2)
+  28   3                                      {
+  29   4                                              seg_find_mode=(seg_find_mode+1)%3;
+  30   4                                      }
+  31   3                                              
+  32   3                              }
+  33   2                              if(key_val==9)
+  34   2                              {
+  35   3                                      buzzer_ctrl=0;
+  36   3                                      P2P0_ctrl(0xa0,buzzer_ctrl<<6);                 
+  37   3                              }
+  38   2              }
+  39   1      }
+  40          
+  41          u8 hour,second,minute;
+  42          void ds1302_process()
+  43          {
+  44   1              second=bcdtodec(Read_Ds1302_Byte(0x81));
+  45   1              minute=bcdtodec(Read_Ds1302_Byte(0x83));
+  46   1              hour=bcdtodec(Read_Ds1302_Byte(0x85));
+  47   1      }
+  48          
+  49          u16 cnt_sonic;
+  50          u16 dist_sonic;
+  51          void vSonic_Process()
+  52          {
+  53   1              if(cnt_sonic>=100)
+  54   1              {
+C51 COMPILER V9.56.0.0   MAIN                                                              11/07/2025 17:56:13 PAGE 2   
+
+  55   2                      cnt_sonic=0;
+  56   2                      dist_sonic=uiDistance_Get();
+  57   2              }
+  58   1      
+  59   1      }
+  60          
+  61          u8 hour1,second1,minute1;
+  62          void vReti()
+  63          {
+  64   1              static u8 k;    
+  65   1              if((dist_sonic<30)&&k==0)
+  66   1              {
+  67   2                      hour1=hour;
+  68   2                      minute1=minute;
+  69   2                      second1=second;
+  70   2                      k=1;
+  71   2              }
+  72   1              if(dist_sonic>=30)
+  73   1              {
+  74   2                      k=0;
+  75   2              }       
+  76   1      }
+  77          
+  78          void vBuzzer_Process()
+  79          {
+  80   1              if(dist_sonic<30)
+  81   1              {
+  82   2                      buzzer_ctrl=1;
+  83   2                      P2P0_ctrl(0xa0,buzzer_ctrl<<6);                 
+  84   2              }
+  85   1              if(dist_sonic>=30)
+  86   1              {
+  87   2                      buzzer_ctrl=0;
+  88   2                      P2P0_ctrl(0xa0,buzzer_ctrl<<6);                 
+  89   2              }
+  90   1      }
+  91          
+  92          u8 led_ctrl=0xff;
+  93          void led_proc()
+  94          {
+  95   1              if(seg_disp_mode==0)
+  96   1                      led_ctrl&=~0x01;
+  97   1              else
+  98   1                      led_ctrl |=0x01;
+  99   1              if(seg_disp_mode==1)
+ 100   1                      led_ctrl &=~0x02;
+ 101   1              else
+ 102   1                      led_ctrl|=0x02;
+ 103   1              if(seg_disp_mode==2)
+ 104   1                      led_ctrl &=~0x04;
+ 105   1              else
+ 106   1                      led_ctrl|=0x04;
+ 107   1              P2P0_ctrl(0x80,led_ctrl);
+ 108   1      }
+ 109          
+ 110          void smg_process()
+ 111          {
+ 112   1              if(seg_disp_mode==0)
+ 113   1              {
+ 114   2                      smg_buf[0]=0x38;
+ 115   2                      smg_buf[1]=0x00;
+ 116   2                      smg_buf[2]=0x00;
+C51 COMPILER V9.56.0.0   MAIN                                                              11/07/2025 17:56:13 PAGE 3   
+
+ 117   2                      smg_buf[3]=0x00;
+ 118   2                      smg_buf[4]=0x00;
+ 119   2                      smg_buf[5]=smg_code[dist_sonic/100%10];
+ 120   2                      smg_buf[6]=smg_code[dist_sonic/10%10];
+ 121   2                      smg_buf[7]=smg_code[dist_sonic%10];             
+ 122   2              }
+ 123   1              if(seg_disp_mode==1)
+ 124   1              {
+ 125   2                      smg_buf[0]=smg_code[hour/10];
+ 126   2                      smg_buf[1]=smg_code[hour%10];
+ 127   2                      smg_buf[2]=0x40;
+ 128   2                      smg_buf[3]=smg_code[minute/10];
+ 129   2                      smg_buf[4]=smg_code[minute%10];
+ 130   2                      smg_buf[5]=0x40;
+ 131   2                      smg_buf[6]=smg_code[second/10];
+ 132   2                      smg_buf[7]=smg_code[second%10];                 
+ 133   2              }
+ 134   1              if(seg_disp_mode==2)
+ 135   1              {
+ 136   2                      if(key_val==8)
+ 137   2                      {
+ 138   3                              smg_buf[0]=0x77;
+ 139   3                              smg_buf[1]=smg_code[seg_find_mode+1];
+ 140   3                              smg_buf[2]=0x40;
+ 141   3                              smg_buf[3]=0x40;
+ 142   3                              smg_buf[4]=0x40;
+ 143   3                              smg_buf[5]=0x40;        
+ 144   3                              smg_buf[6]=0x40;
+ 145   3                              smg_buf[7]=0x40;                                
+ 146   3                      }
+ 147   2                      else
+ 148   2                      {
+ 149   3                              smg_buf[0]=0x77;
+ 150   3                              smg_buf[1]=smg_code[seg_find_mode+1];
+ 151   3                              smg_buf[2]=smg_code[hour1/10];
+ 152   3                              smg_buf[3]=smg_code[hour1%10];
+ 153   3                              smg_buf[4]=smg_code[minute1/10];
+ 154   3                              smg_buf[5]=smg_code[minute1%10];        
+ 155   3                              smg_buf[6]=smg_code[second/10];
+ 156   3                              smg_buf[7]=smg_code[second%10];                                 
+ 157   3                      }
+ 158   2              }
+ 159   1      }
+ 160          
+ 161          void main()
+ 162          {
+ 163   1              system_init();
+ 164   1              Timer2Init();
+ 165   1              clock_set(23,59,50);
+ 166   1              
+ 167   1              while(1)
+ 168   1              {
+ 169   2                      smg_process();
+ 170   2                      kbd_proc();
+ 171   2                      vSonic_Process();
+ 172   2                      ds1302_process();
+ 173   2                      vBuzzer_Process();
+ 174   2              }
+ 175   1      }
+ 176          
+ 177          void t2int() interrupt 12
+ 178          {
+C51 COMPILER V9.56.0.0   MAIN                                                              11/07/2025 17:56:13 PAGE 4   
+
+ 179   1              cnt_sonic++;
+ 180   1              cnt_kbd++;
+ 181   1              smg_disp();
+ 182   1              vReti();
+ 183   1              led_proc();
+ 184   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    767    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     17    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
