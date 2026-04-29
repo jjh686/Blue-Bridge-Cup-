@@ -1,0 +1,8 @@
+".\Objects\STARTUP.obj",
+".\Objects\main.obj",
+".\Objects\Timer.obj",
+".\Objects\P2P0.obj",
+".\Objects\onewire.obj",
+".\Objects\smg.obj" 
+TO ".\Objects\2025_9_16" 
+PRINT(".\Listings\2025_9_16.m51") RAMSIZE(256) 

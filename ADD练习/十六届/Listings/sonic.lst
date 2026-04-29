@@ -1,0 +1,88 @@
+C51 COMPILER V9.56.0.0   SONIC                                                             04/10/2026 12:29:38 PAGE 1   
+
+
+C51 COMPILER V9.56.0.0, COMPILATION OF MODULE SONIC
+OBJECT MODULE PLACED IN .\Objects\sonic.obj
+COMPILER INVOKED BY: D:\keil c51v956\C51\BIN\C51.EXE library\device\sonic.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\library\de
+                    -vice;.\library\system) DEBUG OBJECTEXTEND PRINT(.\Listings\sonic.lst) OBJECT(.\Objects\sonic.obj)
+
+line level    source
+
+   1          #include "sonic.h"
+   2          
+   3          //void Delay12us()              //@12.000MHz
+   4          //{
+   5          //      unsigned char i;
+   6          
+   7          //      _nop_();
+   8          //      _nop_();
+   9          //      i = 33;
+  10          //      while (--i);
+  11          //}
+  12          
+  13          //void vSend_Wave()
+  14          //{
+  15          //      u8 i;
+  16          //      for(i=0;i<8;i++)
+  17          //      {
+  18          //              P10=1;
+  19          //              Delay12us();
+  20          //              P10=0;
+  21          //              Delay12us();
+  22          //      }
+  23          //      
+  24          //}
+  25          
+  26          void vSend_Wave_nop()
+  27          {
+  28   1              u8 i,j;
+  29   1              for(i=0;i<8;i++)
+  30   1              {
+  31   2                      P10=1;
+  32   2                      for(j=0;j<25;j++)
+  33   2                              _nop_();
+  34   2                      P10=0;
+  35   2                      for(j=0;j<25;j++)
+  36   2                              _nop_();
+  37   2              }
+  38   1      }
+  39          
+  40          //u16 ucDistance_Get()
+  41          //{
+  42          //      u16 distance_val;
+  43          //      vSend_Wave();
+  44          //      TL1=0;TH1=0;
+  45          //      TR1=1;
+  46          //      while(P11==1);
+  47          //      TR1=0;
+  48          //      distance_val=((TH1<<8)|TL1)*0.017;
+  49          //      return distance_val;
+  50          //}
+  51          
+  52          u16 ucDistance_Get_PAC()
+  53          {
+  54   1              u16 distance_val;
+C51 COMPILER V9.56.0.0   SONIC                                                             04/10/2026 12:29:38 PAGE 2   
+
+  55   1              vSend_Wave_nop();
+  56   1              CH=0;CL=0;
+  57   1              CR=1;
+  58   1              while(P11==1&&CF==0);
+  59   1              CR=0;
+  60   1              distance_val=((CH<<8)|CL)*0.017;
+  61   1              return distance_val;
+  62   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     68    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

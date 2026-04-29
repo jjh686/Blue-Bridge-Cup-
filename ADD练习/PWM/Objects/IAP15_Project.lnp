@@ -1,0 +1,18 @@
+".\Objects\STARTUP.obj",
+".\Objects\main.obj",
+".\Objects\Uart.obj",
+".\Objects\Delay.obj",
+".\Objects\Timer.obj",
+".\Objects\Device.obj",
+".\Objects\SMG.obj",
+".\Objects\BTN.obj",
+".\Objects\KBD.obj",
+".\Objects\onewire.obj",
+".\Objects\iic.obj",
+".\Objects\ds1302.obj",
+".\Objects\NE555.obj",
+".\Objects\Sonic.obj" 
+TO ".\Objects\IAP15_Project" 
+REGFILE (.\Objects\IAP15_Project.ORC) 
+PRINT(".\Listings\IAP15_Project.map") DISABLEWARNING (16) 
+REMOVEUNUSED 

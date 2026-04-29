@@ -1,0 +1,348 @@
+BL51 BANKED LINKER/LOCATER V6.22                                                        11/06/2025  23:41:01  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22, INVOKED BY:
+D:\KEIL C51V956\C51\BIN\BL51.EXE .\Objects\STARTUP.obj, .\Objects\main.obj, .\Objects\P2P0.obj, .\Objects\NE555.obj, .\O
+>> bjects\SMG.obj, .\Objects\Timer.obj TO .\Objects\2025_11_6 PRINT (.\Listings\2025_11_6.m51) RAMSIZE (256)
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\STARTUP.obj (?C_STARTUP)
+  .\Objects\main.obj (MAIN)
+  .\Objects\P2P0.obj (P2P0)
+  .\Objects\NE555.obj (NE555)
+  .\Objects\SMG.obj (SMG)
+  .\Objects\Timer.obj (TIMER)
+  D:\KEIL C51V956\C51\LIB\C51S.LIB (?C_INIT)
+  D:\KEIL C51V956\C51\LIB\C51S.LIB (?C?UIDIV)
+
+
+LINK MAP OF MODULE:  .\Objects\2025_11_6 (?C_STARTUP)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            DATA    0008H     0013H     UNIT         ?DT?SMG
+            DATA    001BH     0004H     UNIT         ?DT?MAIN
+            IDATA   001FH     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+            CODE    0003H     0055H     UNIT         ?C?LIB_CODE
+            CODE    0058H     000BH     UNIT         ?PR?VCOUNTER0_INIT?NE555
+            CODE    0063H     0003H     ABSOLUTE     
+            CODE    0066H     008CH     UNIT         ?C_C51STARTUP
+            CODE    00F2H     0077H     UNIT         ?PR?SMG_PROCESS?MAIN
+            CODE    0169H     003EH     UNIT         ?PR?T2INT?MAIN
+            CODE    01A7H     002FH     UNIT         ?PR?VSMG_DISPLAY?SMG
+            CODE    01D6H     0027H     UNIT         ?PR?VNE555_PROCESS?MAIN
+            CODE    01FDH     0015H     UNIT         ?PR?VSYSTEM_INIT?MAIN
+            CODE    0212H     0012H     UNIT         ?PR?TIMER2INIT?TIMER
+            CODE    0224H     000EH     UNIT         ?PR?MAIN?MAIN
+            CODE    0232H     000DH     UNIT         ?PR?_VP2P0_CTRL?P2P0
+            CODE    023FH     000DH     UNIT         ?C_INITSEG
+
+
+
+OVERLAY MAP OF MODULE:   .\Objects\2025_11_6 (?C_STARTUP)
+
+
+SEGMENT
+  +--> CALLED SEGMENT
+---------------------
+?C_C51STARTUP
+  +--> ?PR?MAIN?MAIN
+  +--> ?C_INITSEG
+BL51 BANKED LINKER/LOCATER V6.22                                                      11/06/2025  23:41:01  PAGE 2
+
+
+
+?PR?MAIN?MAIN
+  +--> ?PR?VSYSTEM_INIT?MAIN
+  +--> ?PR?TIMER2INIT?TIMER
+  +--> ?PR?VCOUNTER0_INIT?NE555
+  +--> ?PR?SMG_PROCESS?MAIN
+
+?PR?VSYSTEM_INIT?MAIN
+  +--> ?PR?_VP2P0_CTRL?P2P0
+
+*** NEW ROOT ***************************************************
+
+?PR?T2INT?MAIN
+  +--> ?PR?VSMG_DISPLAY?SMG
+  +--> ?PR?VNE555_PROCESS?MAIN
+
+?PR?VSMG_DISPLAY?SMG
+  +--> ?PR?_VP2P0_CTRL?P2P0
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\2025_11_6 (?C_STARTUP)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        ?C_STARTUP
+  C:0066H         SEGMENT       ?C_C51STARTUP
+  I:001FH         SEGMENT       ?STACK
+  C:0000H         PUBLIC        ?C_STARTUP
+  D:00E0H         SYMBOL        ACC
+  D:00F0H         SYMBOL        B
+  D:0083H         SYMBOL        DPH
+  D:0082H         SYMBOL        DPL
+  N:0000H         SYMBOL        IBPSTACK
+  N:0100H         SYMBOL        IBPSTACKTOP
+  N:0080H         SYMBOL        IDATALEN
+  C:0069H         SYMBOL        IDATALOOP
+  N:0000H         SYMBOL        PBPSTACK
+  N:0100H         SYMBOL        PBPSTACKTOP
+  N:0000H         SYMBOL        PDATALEN
+  N:0000H         SYMBOL        PDATASTART
+  N:0000H         SYMBOL        PPAGE
+  N:0000H         SYMBOL        PPAGEENABLE
+  D:00A0H         SYMBOL        PPAGE_SFR
+  D:0081H         SYMBOL        SP
+  C:0066H         SYMBOL        STARTUP1
+  N:0000H         SYMBOL        XBPSTACK
+  N:0000H         SYMBOL        XBPSTACKTOP
+  N:0000H         SYMBOL        XDATALEN
+  N:0000H         SYMBOL        XDATASTART
+  C:0000H         LINE#         126
+  C:0066H         LINE#         133
+  C:0068H         LINE#         134
+  C:0069H         LINE#         135
+  C:006AH         LINE#         136
+  C:006CH         LINE#         185
+BL51 BANKED LINKER/LOCATER V6.22                                                      11/06/2025  23:41:01  PAGE 3
+
+
+  C:006FH         LINE#         196
+  -------         ENDMOD        ?C_STARTUP
+
+  -------         MODULE        MAIN
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0080H         PUBLIC        P0
+  D:0090H         PUBLIC        P1
+  D:00A0H         PUBLIC        P2
+  D:00B0H         PUBLIC        P3
+  D:00C0H         PUBLIC        P4
+  D:001BH         PUBLIC        freq_ne555
+  D:00C8H         PUBLIC        P5
+  D:00E8H         PUBLIC        P6
+  D:00F8H         PUBLIC        P7
+  D:00A8H         PUBLIC        IE
+  C:01FDH         PUBLIC        vSystem_init
+  D:00B8H         PUBLIC        IP
+  D:001DH         PUBLIC        cnt_ne555
+  D:00D8H         PUBLIC        CCON
+  C:0224H         PUBLIC        main
+  D:0098H         PUBLIC        SCON
+  D:0088H         PUBLIC        TCON
+  D:008CH         PUBLIC        TH0
+  D:008AH         PUBLIC        TL0
+  C:00F2H         PUBLIC        Smg_Process
+  C:01D6H         PUBLIC        vNE555_Process
+  C:0169H         PUBLIC        t2int
+  D:00D0H         PUBLIC        PSW
+  -------         PROC          VSYSTEM_INIT
+  C:01FDH         LINE#         3
+  C:01FDH         LINE#         4
+  C:01FDH         LINE#         5
+  C:0204H         LINE#         6
+  C:020BH         LINE#         7
+  -------         ENDPROC       VSYSTEM_INIT
+  -------         PROC          VNE555_PROCESS
+  C:01D6H         LINE#         12
+  C:01D6H         LINE#         13
+  C:01D6H         LINE#         14
+  C:01DEH         LINE#         15
+  C:01E7H         LINE#         16
+  C:01E7H         LINE#         17
+  C:01ECH         LINE#         18
+  C:01F7H         LINE#         19
+  C:01FAH         LINE#         20
+  C:01FCH         LINE#         21
+  C:01FCH         LINE#         22
+  -------         ENDPROC       VNE555_PROCESS
+  -------         PROC          SMG_PROCESS
+  C:00F2H         LINE#         24
+  C:00F2H         LINE#         25
+  C:00F2H         LINE#         26
+  C:0104H         LINE#         27
+  C:011DH         LINE#         28
+  C:0136H         LINE#         29
+  C:014FH         LINE#         30
+  C:0161H         LINE#         31
+BL51 BANKED LINKER/LOCATER V6.22                                                      11/06/2025  23:41:01  PAGE 4
+
+
+  C:0164H         LINE#         32
+  C:0166H         LINE#         33
+  C:0168H         LINE#         34
+  -------         ENDPROC       SMG_PROCESS
+  -------         PROC          MAIN
+  C:0224H         LINE#         36
+  C:0224H         LINE#         37
+  C:0224H         LINE#         38
+  C:0227H         LINE#         39
+  C:022AH         LINE#         40
+  C:022DH         LINE#         42
+  C:022DH         LINE#         43
+  C:022DH         LINE#         44
+  C:0230H         LINE#         45
+  -------         ENDPROC       MAIN
+  -------         PROC          T2INT
+  C:0169H         LINE#         49
+  C:0186H         LINE#         51
+  C:0189H         LINE#         52
+  C:018CH         LINE#         53
+  -------         ENDPROC       T2INT
+  -------         ENDMOD        MAIN
+
+  -------         MODULE        P2P0
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0080H         PUBLIC        P0
+  D:0090H         PUBLIC        P1
+  D:00A0H         PUBLIC        P2
+  D:00B0H         PUBLIC        P3
+  D:00C0H         PUBLIC        P4
+  D:00C8H         PUBLIC        P5
+  D:00E8H         PUBLIC        P6
+  D:00F8H         PUBLIC        P7
+  D:00A8H         PUBLIC        IE
+  C:0232H         PUBLIC        _vP2P0_ctrl
+  D:00B8H         PUBLIC        IP
+  D:00D8H         PUBLIC        CCON
+  D:0098H         PUBLIC        SCON
+  D:0088H         PUBLIC        TCON
+  D:00D0H         PUBLIC        PSW
+  -------         PROC          _VP2P0_CTRL
+  D:0007H         SYMBOL        p2data
+  D:0005H         SYMBOL        p0data
+  C:0232H         LINE#         3
+  C:0232H         LINE#         4
+  C:0232H         LINE#         5
+  C:0234H         LINE#         6
+  C:023BH         LINE#         7
+  C:023EH         LINE#         8
+  -------         ENDPROC       _VP2P0_CTRL
+  -------         ENDMOD        P2P0
+
+  -------         MODULE        NE555
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0080H         PUBLIC        P0
+  D:0090H         PUBLIC        P1
+  D:00A0H         PUBLIC        P2
+BL51 BANKED LINKER/LOCATER V6.22                                                      11/06/2025  23:41:01  PAGE 5
+
+
+  C:0058H         PUBLIC        vCounter0_Init
+  D:00B0H         PUBLIC        P3
+  D:00C0H         PUBLIC        P4
+  D:00C8H         PUBLIC        P5
+  D:00E8H         PUBLIC        P6
+  D:00F8H         PUBLIC        P7
+  D:00A8H         PUBLIC        IE
+  D:00B8H         PUBLIC        IP
+  D:00D8H         PUBLIC        CCON
+  D:0098H         PUBLIC        SCON
+  D:0089H         PUBLIC        TMOD
+  D:0088H         PUBLIC        TCON
+  D:008CH         PUBLIC        TH0
+  D:008AH         PUBLIC        TL0
+  B:0088H.4       PUBLIC        TR0
+  D:00D0H         PUBLIC        PSW
+  -------         PROC          VCOUNTER0_INIT
+  C:0058H         LINE#         3
+  C:0058H         LINE#         4
+  C:0058H         LINE#         5
+  C:005BH         LINE#         6
+  C:005EH         LINE#         7
+  C:0060H         LINE#         8
+  C:0062H         LINE#         9
+  -------         ENDPROC       VCOUNTER0_INIT
+  -------         ENDMOD        NE555
+
+  -------         MODULE        SMG
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0080H         PUBLIC        P0
+  D:0090H         PUBLIC        P1
+  D:00A0H         PUBLIC        P2
+  D:00B0H         PUBLIC        P3
+  D:00C0H         PUBLIC        P4
+  D:00C8H         PUBLIC        P5
+  D:00E8H         PUBLIC        P6
+  D:00F8H         PUBLIC        P7
+  D:00A8H         PUBLIC        IE
+  D:00B8H         PUBLIC        IP
+  D:00D8H         PUBLIC        CCON
+  D:0098H         PUBLIC        SCON
+  D:0088H         PUBLIC        TCON
+  D:0009H         PUBLIC        smg_code
+  C:01A7H         PUBLIC        vSmg_Display
+  D:0013H         PUBLIC        smg_buf
+  D:00D0H         PUBLIC        PSW
+  -------         PROC          VSMG_DISPLAY
+  -------         DO            
+  D:0008H         SYMBOL        k
+  -------         ENDDO         
+  C:01A7H         LINE#         6
+  C:01A7H         LINE#         7
+  C:01A7H         LINE#         9
+  C:01AEH         LINE#         10
+  C:01BBH         LINE#         11
+  C:01CEH         LINE#         12
+  C:01D5H         LINE#         13
+BL51 BANKED LINKER/LOCATER V6.22                                                      11/06/2025  23:41:01  PAGE 6
+
+
+  -------         ENDPROC       VSMG_DISPLAY
+  -------         ENDMOD        SMG
+
+  -------         MODULE        TIMER
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0080H         PUBLIC        P0
+  D:0090H         PUBLIC        P1
+  D:00A0H         PUBLIC        P2
+  D:00B0H         PUBLIC        P3
+  D:00C0H         PUBLIC        P4
+  D:00C8H         PUBLIC        P5
+  B:00A8H.7       PUBLIC        EA
+  D:00E8H         PUBLIC        P6
+  D:00F8H         PUBLIC        P7
+  D:00A8H         PUBLIC        IE
+  D:00B8H         PUBLIC        IP
+  D:00D8H         PUBLIC        CCON
+  D:0098H         PUBLIC        SCON
+  D:0088H         PUBLIC        TCON
+  D:00AFH         PUBLIC        IE2
+  D:008EH         PUBLIC        AUXR
+  C:0212H         PUBLIC        Timer2Init
+  D:00D6H         PUBLIC        T2H
+  D:00D7H         PUBLIC        T2L
+  D:00D0H         PUBLIC        PSW
+  -------         PROC          TIMER2INIT
+  C:0212H         LINE#         3
+  C:0212H         LINE#         4
+  C:0212H         LINE#         5
+  C:0215H         LINE#         6
+  C:0218H         LINE#         7
+  C:021BH         LINE#         8
+  C:021EH         LINE#         9
+  C:0221H         LINE#         10
+  C:0223H         LINE#         11
+  -------         ENDPROC       TIMER2INIT
+  -------         ENDMOD        TIMER
+
+  -------         MODULE        ?C?UIDIV
+  C:0003H         PUBLIC        ?C?UIDIV
+  -------         ENDMOD        ?C?UIDIV
+
+Program Size: data=32.0 xdata=0 code=588
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

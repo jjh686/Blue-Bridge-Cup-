@@ -1,0 +1,9 @@
+".\Objects\STARTUP.obj",
+".\Objects\main.obj",
+".\Objects\delay.obj",
+".\Objects\Timer.obj",
+".\Objects\P2P0.obj",
+".\Objects\sonic.obj",
+".\Objects\smg.obj" 
+TO ".\Objects\2025_11_4" 
+PRINT(".\Listings\2025_11_4.m51") RAMSIZE(256) 

@@ -1,0 +1,153 @@
+C51 COMPILER V9.56.0.0   MAIN                                                              09/18/2025 19:08:44 PAGE 1   
+
+
+C51 COMPILER V9.56.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: D:\keil c51v956\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\library\device;.\library\s
+                    -ystem) DEBUG OBJECTEXTEND PRINT(.\Listings\main.lst) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include "system.h"
+   2          
+   3          void system_init()
+   4          {
+   5   1              P2P0_ctrl(0xa0,0x00);
+   6   1              P2P0_ctrl(0x80,0xff);
+   7   1              P2P0_ctrl(0xc0,0x00);
+   8   1      }
+   9          
+  10          union eeprom_u16
+  11          {
+  12                  u16 a;
+  13                  u8 b[2];
+  14          }u16_write,u16_read;
+  15          
+  16          union eeprom_s16
+  17          {
+  18                  s16 a;
+  19                  s8 b[2];
+  20          }s16_write,s16_read;
+  21          
+  22          union eeprom_float
+  23          {
+  24                  float a;
+  25                  u8 b[4];
+  26          }float_write,float_read;
+  27          //u8 start_times;
+  28          //u16 u16_write=1234;
+  29          //u16 u16_read=0;
+  30          
+  31          //float float_write=3.1415;
+  32          //float float_read=0;
+  33          
+  34          //s8 minus_write=-23;
+  35          //s8 minus_read=0;
+  36          
+  37          //s16 minus_s16_write=-1234;
+  38          //s16 minus_s16_read=0;
+  39          
+  40          //u8 str_write[11]={"hello world"};
+  41          //u8 str_read[11];
+  42          
+  43          void eeprom_process()
+  44          {
+  45   1      //      u8 i;   
+  46   1      //      start_times=read_eeprom(0x20);
+  47   1      //      write_eeprom(0x20,++start_times);
+  48   1      //      write_eeprom(0x00,u16_write>>8);
+  49   1      //      write_eeprom(0x01,u16_write);
+  50   1      //      u16_read=(read_eeprom(0x00)<<8)+read_eeprom(0x01);
+  51   1      //      
+  52   1      //      write_eeprom(0x03,(u16)(float_write*1000)/256);
+  53   1      //      write_eeprom(0x04,(u16)(float_write*1000)%256);
+  54   1      //      float_read=(read_eeprom(0x03)*256+read_eeprom(0x04))/1000.0;
+C51 COMPILER V9.56.0.0   MAIN                                                              09/18/2025 19:08:44 PAGE 2   
+
+  55   1      //      
+  56   1      //      write_eeprom(0x06,minus_write);
+  57   1      //      minus_read=read_eeprom(0x06);
+  58   1      //      
+  59   1      //      write_eeprom(0x08,minus_s16_write>>8);
+  60   1      //      write_eeprom(0x09,minus_s16_write);
+  61   1      //      minus_s16_read=(read_eeprom(0x08)<<8)+read_eeprom(0x09);
+  62   1      
+  63   1      //      for(i=0;i<sizeof(str_write);i++)
+  64   1      //      {
+  65   1      //              write_eeprom(0x10+i,str_write[i]);
+  66   1      //      }
+  67   1      //      for(i=0;i<sizeof(str_write);i++)
+  68   1      //      {
+  69   1      //              str_read[i]=read_eeprom(0x10+i);
+  70   1      //      }       
+  71   1              u8 i=0;
+  72   1              
+  73   1              u16_write.a=1234;
+  74   1              for(i=0;i<sizeof(u16);i++)
+  75   1              {
+  76   2                      write_eeprom(0x30+i,u16_write.b[i]);
+  77   2              }
+  78   1              for(i=0;i<sizeof(u16);i++)
+  79   1              {
+  80   2                      u16_read.b[i]=read_eeprom(0x30+i);
+  81   2              }       
+  82   1      
+  83   1              s16_write.a=-1234;
+  84   1              for(i=0;i<sizeof(s16);i++)
+  85   1              {
+  86   2                      write_eeprom(0x20+i,s16_write.b[i]);
+  87   2              }
+  88   1              for(i=0;i<sizeof(s16);i++)
+  89   1              {
+  90   2                      s16_read.b[i]=read_eeprom(0x20+i);
+  91   2              }
+  92   1              float_write.a=3.1415926;
+  93   1              for(i=0;i<sizeof(float);i++)
+  94   1              {
+  95   2                      write_eeprom(0x10+i,float_write.b[i]);
+  96   2              }
+  97   1              for(i=0;i<sizeof(float);i++)
+  98   1              {
+  99   2                      float_read.b[i]=read_eeprom(0x10+i);
+ 100   2              }
+ 101   1      }
+ 102          
+ 103          void smg_process()
+ 104          {
+ 105   1              smg_buf[0]=0x00;
+ 106   1              smg_buf[1]=0x00;
+ 107   1              smg_buf[2]=0x00;
+ 108   1              smg_buf[3]=0x00;
+ 109   1              smg_buf[4]=0x00;
+ 110   1              smg_buf[5]=0x00;
+ 111   1              smg_buf[6]=0x00;
+ 112   1              smg_buf[7]=0x00;        
+ 113   1      }
+ 114          
+ 115          void main()
+ 116          {
+C51 COMPILER V9.56.0.0   MAIN                                                              09/18/2025 19:08:44 PAGE 3   
+
+ 117   1              system_init();
+ 118   1              eeprom_process();
+ 119   1              
+ 120   1              while(1)
+ 121   1              {
+ 122   2                      smg_process();
+ 123   2                      smg_display();
+ 124   2              }
+ 125   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    242    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     16       1
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

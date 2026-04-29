@@ -1,0 +1,255 @@
+C51 COMPILER V9.56.0.0   MAIN                                                              04/07/2026 18:55:37 PAGE 1   
+
+
+C51 COMPILER V9.56.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: D:\keil c51v956\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\library\device;.\library\s
+                    -ystem) DEBUG OBJECTEXTEND PRINT(.\Listings\main.lst) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include "system.h"
+   2                  
+   3          void vSystem_init()
+   4          {
+   5   1              vP2P0_Ctrl(0x80,0xff);
+   6   1              vP2P0_Ctrl(0xa0,0);
+   7   1              vP2P0_Ctrl(0xe0,0xff);
+   8   1      }
+   9          
+  10          #define Disp_Tmp 0
+  11          #define Disp_Dac 1
+  12          #define Disp_Cal 2
+  13          u8 disp_mode=Disp_Tmp;
+  14          u8 dac_val=100;
+  15          char cal_val=0;
+  16          char cal_val_true=0; 
+  17          bit lock_state=0;
+  18          u8 relay_ctrl=0x00;
+  19          bit dac_mode=0;
+  20          
+  21          u8 cnt_tmp;
+  22          s16 tmp_val=0,tmp_val_true=0,tmp_val_true_prev=0;
+  23          u8 tmp_alarm=0;
+  24          
+  25          u32 cnt_l2=0,cnt_l3=0,cnt_l4=0;
+  26          void vDs18b20_Proc()
+  27          {
+  28   1              if(cnt_tmp>=100)
+  29   1              {
+  30   2                      cnt_tmp=0;
+  31   2                      tmp_val=(int)(ucTemp_Read());
+  32   2                      tmp_val_true_prev=tmp_val_true;
+  33   2                      tmp_val_true=tmp_val+cal_val_true;
+  34   2                      if(tmp_val_true-tmp_val_true_prev>=1)
+  35   2                      {
+  36   3                              cnt_l2=2000;
+  37   3                              cnt_l4=3000;
+  38   3                              tmp_alarm=1;
+  39   3                      }
+  40   2                      else if(tmp_val_true-tmp_val_true_prev<=-1)
+  41   2                      {
+  42   3                              cnt_l3=2000;
+  43   3                              cnt_l4=3000; 
+  44   3                              tmp_alarm=2; 
+  45   3                      }
+  46   2                      else
+  47   2                              tmp_alarm=0;
+  48   2              }
+  49   1      } 
+  50          
+  51          u8 cnt_kbd,kbd_val,kbd_long;
+  52          u32 time_s13=0;
+  53          void vKBD_Proc()
+  54          {
+C51 COMPILER V9.56.0.0   MAIN                                                              04/07/2026 18:55:37 PAGE 2   
+
+  55   1              if(cnt_kbd>=20)
+  56   1              {
+  57   2                      cnt_kbd=0;
+  58   2                      kbd_val=ucKbd_keyio_Read();
+  59   2                      kbd_long=ucKbd_keyio_state();
+  60   2                      if(kbd_val==12)
+  61   2                      {
+  62   3                              disp_mode=(disp_mode+1)%3;
+  63   3                              if(disp_mode==Disp_Tmp)
+  64   3                                      cal_val_true=cal_val;
+  65   3                      }
+  66   2                      if(kbd_val==13)
+  67   2                      {
+  68   3      //                      dac_mode=!dac_mode;
+  69   3                      }
+  70   2                      if(kbd_long==13)
+  71   2                      {
+  72   3                              time_s13++;
+  73   3                      }
+  74   2                      if(kbd_val==0&&kbd_long==0)
+  75   2                      {
+  76   3                              if(time_s13>=75)
+  77   3                                      lock_state=!lock_state;
+  78   3                              else if(time_s13!=0)
+  79   3                                      dac_mode=!dac_mode;
+  80   3                              time_s13=0;
+  81   3                      }
+  82   2                      if(kbd_val==16)
+  83   2                      {
+  84   3                              if(disp_mode==Disp_Dac&&dac_val<255)
+  85   3                                      dac_val+=5;
+  86   3                              if(disp_mode==Disp_Cal&&cal_val<9)
+  87   3                                      cal_val+=1;
+  88   3                              if(disp_mode==Disp_Tmp&&lock_state==0)
+  89   3                                      relay_ctrl|=0x10;
+  90   3                      }
+  91   2                      if(kbd_val==17)
+  92   2                      {
+  93   3                              if(disp_mode==Disp_Dac&&dac_val>0)
+  94   3                                      dac_val-=5;
+  95   3                              if(disp_mode==Disp_Cal&&cal_val>-9)
+  96   3                                      cal_val-=1;
+  97   3                              if(disp_mode==Disp_Tmp&&lock_state==0)
+  98   3                                      relay_ctrl&=~0x10;                      
+  99   3                      }
+ 100   2              }
+ 101   1      }
+ 102          
+ 103          void vRelay_Proc()
+ 104          {
+ 105   1              vP2P0_Ctrl(0xa0,relay_ctrl);
+ 106   1      }
+ 107          
+ 108          u8 cnt_dac=0;
+ 109          void vDAC_Proc()
+ 110          {
+ 111   1              if(cnt_dac>=10)
+ 112   1              {
+ 113   2                      cnt_dac=0;
+ 114   2                      if(dac_mode==1)
+ 115   2                              vDAC_Write(dac_val);
+ 116   2                      else
+C51 COMPILER V9.56.0.0   MAIN                                                              04/07/2026 18:55:37 PAGE 3   
+
+ 117   2                      {
+ 118   3                              if(tmp_val_true<=10)
+ 119   3                                      vDAC_Write(102);
+ 120   3                              else if(tmp_val_true>=40)
+ 121   3                                      vDAC_Write(255);
+ 122   3                              else
+ 123   3                                      vDAC_Write(5.1f*tmp_val_true+51.0f);
+ 124   3                      }
+ 125   2              }
+ 126   1      }
+ 127          
+ 128          u32 cnt_led=0;
+ 129          u8 led_ctrl=0xff;
+ 130          void vLED_Proc()
+ 131          {
+ 132   1              cnt_led++;
+ 133   1              if(dac_mode==0)
+ 134   1                      led_ctrl&=~0x01; 
+ 135   1              else
+ 136   1                      led_ctrl|=0x01;
+ 137   1              if(cnt_l2>0)
+ 138   1              {
+ 139   2                      cnt_l2--;
+ 140   2                      led_ctrl&=~0x02; 
+ 141   2              }
+ 142   1              else
+ 143   1                      led_ctrl|=0x02;
+ 144   1              if(cnt_l3>0)
+ 145   1              {
+ 146   2                      cnt_l3--;
+ 147   2                      led_ctrl&=~0x04; 
+ 148   2              }
+ 149   1              else
+ 150   1                      led_ctrl|=0x04;
+ 151   1              if(cnt_l4>0)
+ 152   1              {
+ 153   2                      cnt_l4--; 
+ 154   2                      if(cnt_led%400<200)
+ 155   2                              led_ctrl&=~0x08; 
+ 156   2                      else
+ 157   2                              led_ctrl|=0x08;
+ 158   2              }
+ 159   1              else
+ 160   1                      led_ctrl|=0x08;
+ 161   1              if(lock_state==0)
+ 162   1                      led_ctrl&=~0x80; 
+ 163   1              else
+ 164   1                      led_ctrl|=0x80;
+ 165   1              vP2P0_Ctrl(0x80,led_ctrl); 
+ 166   1      }
+ 167          
+ 168          void vSmg_Process()
+ 169          {
+ 170   1              if(disp_mode==Disp_Tmp)
+ 171   1              {
+ 172   2                      smg_buf[0]=0x39;
+ 173   2                      smg_buf[1]=smg_buf[2]=smg_buf[3]=smg_buf[4]=smg_buf[5]=0x00;
+ 174   2                      smg_buf[6]=smg_code[tmp_val_true/10];
+ 175   2                      smg_buf[7]=smg_code[tmp_val_true%10];           
+ 176   2              }
+ 177   1              else if(disp_mode==Disp_Dac)
+ 178   1              {
+C51 COMPILER V9.56.0.0   MAIN                                                              04/07/2026 18:55:37 PAGE 4   
+
+ 179   2                      smg_buf[0]=0x77;
+ 180   2                      smg_buf[1]=smg_buf[2]=smg_buf[3]=smg_buf[4]=0x00;
+ 181   2                      smg_buf[5]=smg_code[(dac_val>99)?(dac_val/100%10):10];
+ 182   2                      smg_buf[6]=smg_code[(dac_val>9)?(dac_val/10%10):10];
+ 183   2                      smg_buf[7]=smg_code[dac_val%10];
+ 184   2              }
+ 185   1              else if(disp_mode==Disp_Cal)
+ 186   1              {
+ 187   2                      smg_buf[0]=0x73;
+ 188   2                      smg_buf[1]=smg_buf[2]=smg_buf[3]=smg_buf[4]=smg_buf[5]=0x00;
+ 189   2                      if(cal_val>=0)
+ 190   2                      {
+ 191   3                              smg_buf[6]=0x00;
+ 192   3                              smg_buf[7]=smg_code[cal_val];
+ 193   3                      }
+ 194   2                      else
+ 195   2                      {
+ 196   3                              smg_buf[6]=0x40;
+ 197   3                              smg_buf[7]=smg_code[-cal_val];
+ 198   3                      }
+ 199   2              }       
+ 200   1      }
+ 201          
+ 202          void main()
+ 203          {
+ 204   1              vSystem_init();
+ 205   1              Timer2Init();
+ 206   1              while((u8)ucTemp_Read()==85);
+ 207   1              
+ 208   1              while(1)
+ 209   1              {
+ 210   2                      vSmg_Process();
+ 211   2                      vDs18b20_Proc();
+ 212   2                      vKBD_Proc();
+ 213   2                      vDAC_Proc();
+ 214   2              }
+ 215   1      }
+ 216          
+ 217          void vTimer2_init() interrupt 12
+ 218          {
+ 219   1              vSmg_disp();
+ 220   1              cnt_tmp++;
+ 221   1              cnt_kbd++;
+ 222   1              vRelay_Proc();
+ 223   1              cnt_dac++;
+ 224   1              vLED_Proc();
+ 225   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   1018    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     38    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      2    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

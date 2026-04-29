@@ -1,0 +1,421 @@
+BL51 BANKED LINKER/LOCATER V6.22                                                        09/16/2025  14:27:12  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22, INVOKED BY:
+D:\KEIL C51V956\C51\BIN\BL51.EXE .\Objects\STARTUP.obj, .\Objects\main.obj, .\Objects\Timer.obj, .\Objects\P2P0.obj, .\O
+>> bjects\smg.obj, .\Objects\btn.obj TO .\Objects\btn PRINT (.\Listings\btn.m51) RAMSIZE (256)
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\STARTUP.obj (?C_STARTUP)
+  .\Objects\main.obj (MAIN)
+  .\Objects\Timer.obj (TIMER)
+  .\Objects\P2P0.obj (P2P0)
+  .\Objects\smg.obj (SMG)
+  .\Objects\btn.obj (BTN)
+  D:\KEIL C51V956\C51\LIB\C51S.LIB (?C_INIT)
+
+
+LINK MAP OF MODULE:  .\Objects\btn (?C_STARTUP)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            DATA    0008H     001BH     UNIT         ?DT?SMG
+            DATA    0023H     0003H     UNIT         ?DT?BTN
+            DATA    0026H     0002H     UNIT         ?DT?MAIN
+            IDATA   0028H     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+            CODE    0003H     0044H     UNIT         ?PR?BTN_READ?BTN
+            CODE    0047H     0018H     UNIT         ?C_INITSEG
+                    005FH     0004H                  *** GAP ***
+            CODE    0063H     0003H     ABSOLUTE     
+            CODE    0066H     008CH     UNIT         ?C_C51STARTUP
+            CODE    00F2H     003DH     UNIT         ?PR?T2INT?MAIN
+            CODE    012FH     0038H     UNIT         ?PR?SMG_PROCESS?MAIN
+            CODE    0167H     0030H     UNIT         ?PR?BTN_PROCESS_THREELINE?MAIN
+            CODE    0197H     002FH     UNIT         ?PR?SMG_DISPLAY?SMG
+            CODE    01C6H     0015H     UNIT         ?PR?SYSTEM_INIT?MAIN
+            CODE    01DBH     0012H     UNIT         ?PR?TIMER2INIT?TIMER
+            CODE    01EDH     0011H     UNIT         ?PR?BTN_PROCESS?MAIN
+            CODE    01FEH     000EH     UNIT         ?PR?MAIN?MAIN
+            CODE    020CH     000CH     UNIT         ?PR?BTN_READ_THREELINE?BTN
+            CODE    0218H     0008H     UNIT         ?PR?_P2P0_CTRL?P2P0
+
+
+
+OVERLAY MAP OF MODULE:   .\Objects\btn (?C_STARTUP)
+
+
+SEGMENT
+  +--> CALLED SEGMENT
+---------------------
+?C_C51STARTUP
+BL51 BANKED LINKER/LOCATER V6.22                                                      09/16/2025  14:27:12  PAGE 2
+
+
+  +--> ?PR?MAIN?MAIN
+  +--> ?C_INITSEG
+
+?PR?MAIN?MAIN
+  +--> ?PR?SYSTEM_INIT?MAIN
+  +--> ?PR?TIMER2INIT?TIMER
+  +--> ?PR?SMG_PROCESS?MAIN
+  +--> ?PR?BTN_PROCESS_THREELINE?MAIN
+
+?PR?SYSTEM_INIT?MAIN
+  +--> ?PR?_P2P0_CTRL?P2P0
+
+?PR?BTN_PROCESS_THREELINE?MAIN
+  +--> ?PR?BTN_READ_THREELINE?BTN
+
+*** NEW ROOT ***************************************************
+
+?PR?T2INT?MAIN
+  +--> ?PR?SMG_DISPLAY?SMG
+
+?PR?SMG_DISPLAY?SMG
+  +--> ?PR?_P2P0_CTRL?P2P0
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\btn (?C_STARTUP)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        ?C_STARTUP
+  C:0066H         SEGMENT       ?C_C51STARTUP
+  I:0028H         SEGMENT       ?STACK
+  C:0000H         PUBLIC        ?C_STARTUP
+  D:00E0H         SYMBOL        ACC
+  D:00F0H         SYMBOL        B
+  D:0083H         SYMBOL        DPH
+  D:0082H         SYMBOL        DPL
+  N:0000H         SYMBOL        IBPSTACK
+  N:0100H         SYMBOL        IBPSTACKTOP
+  N:0080H         SYMBOL        IDATALEN
+  C:0069H         SYMBOL        IDATALOOP
+  N:0000H         SYMBOL        PBPSTACK
+  N:0100H         SYMBOL        PBPSTACKTOP
+  N:0000H         SYMBOL        PDATALEN
+  N:0000H         SYMBOL        PDATASTART
+  N:0000H         SYMBOL        PPAGE
+  N:0000H         SYMBOL        PPAGEENABLE
+  D:00A0H         SYMBOL        PPAGE_SFR
+  D:0081H         SYMBOL        SP
+  C:0066H         SYMBOL        STARTUP1
+  N:0000H         SYMBOL        XBPSTACK
+  N:0000H         SYMBOL        XBPSTACKTOP
+  N:0000H         SYMBOL        XDATALEN
+  N:0000H         SYMBOL        XDATASTART
+  C:0000H         LINE#         126
+  C:0066H         LINE#         133
+BL51 BANKED LINKER/LOCATER V6.22                                                      09/16/2025  14:27:12  PAGE 3
+
+
+  C:0068H         LINE#         134
+  C:0069H         LINE#         135
+  C:006AH         LINE#         136
+  C:006CH         LINE#         185
+  C:006FH         LINE#         196
+  -------         ENDMOD        ?C_STARTUP
+
+  -------         MODULE        MAIN
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0080H         PUBLIC        P0
+  D:0090H         PUBLIC        P1
+  D:00A0H         PUBLIC        P2
+  D:00B0H         PUBLIC        P3
+  D:00C0H         PUBLIC        P4
+  D:00C8H         PUBLIC        P5
+  D:00E8H         PUBLIC        P6
+  D:00F8H         PUBLIC        P7
+  D:00A8H         PUBLIC        IE
+  D:00B8H         PUBLIC        IP
+  D:00D8H         PUBLIC        CCON
+  C:01FEH         PUBLIC        main
+  C:01EDH         PUBLIC        btn_process
+  C:012FH         PUBLIC        smg_process
+  D:0098H         PUBLIC        SCON
+  D:0088H         PUBLIC        TCON
+  C:01C6H         PUBLIC        system_init
+  C:0167H         PUBLIC        btn_process_threeline
+  D:0026H         PUBLIC        s_number
+  D:0027H         PUBLIC        cnt_key
+  C:00F2H         PUBLIC        t2int
+  D:00D0H         PUBLIC        PSW
+  -------         PROC          SYSTEM_INIT
+  C:01C6H         LINE#         3
+  C:01C6H         LINE#         4
+  C:01C6H         LINE#         5
+  C:01CDH         LINE#         6
+  C:01D4H         LINE#         7
+  -------         ENDPROC       SYSTEM_INIT
+  -------         PROC          BTN_PROCESS
+  -------         DO            
+  D:0007H         SYMBOL        key_val
+  -------         ENDDO         
+  C:01EDH         LINE#         13
+  C:01EDH         LINE#         14
+  C:01EDH         LINE#         16
+  C:01F2H         LINE#         17
+  C:01F2H         LINE#         18
+  C:01F5H         LINE#         19
+  C:01F8H         LINE#         20
+  C:01FBH         LINE#         21
+  C:01FBH         LINE#         22
+  C:01FDH         LINE#         23
+  C:01FDH         LINE#         24
+  C:01FDH         LINE#         25
+  -------         ENDPROC       BTN_PROCESS
+  -------         PROC          BTN_PROCESS_THREELINE
+  C:0167H         LINE#         28
+BL51 BANKED LINKER/LOCATER V6.22                                                      09/16/2025  14:27:12  PAGE 4
+
+
+  C:0167H         LINE#         29
+  C:0167H         LINE#         30
+  C:016DH         LINE#         31
+  C:016DH         LINE#         32
+  C:016FH         LINE#         33
+  C:0172H         LINE#         34
+  C:0177H         LINE#         35
+  C:0177H         LINE#         36
+  C:0179H         LINE#         37
+  C:0179H         LINE#         38
+  C:017EH         LINE#         39
+  C:017EH         LINE#         40
+  C:0180H         LINE#         41
+  C:0180H         LINE#         42
+  C:0185H         LINE#         43
+  C:0185H         LINE#         44
+  C:018BH         LINE#         45
+  C:018BH         LINE#         46
+  C:0190H         LINE#         47
+  C:0190H         LINE#         48
+  C:0196H         LINE#         49
+  C:0196H         LINE#         50
+  C:0196H         LINE#         51
+  -------         ENDPROC       BTN_PROCESS_THREELINE
+  -------         PROC          SMG_PROCESS
+  C:012FH         LINE#         54
+  C:012FH         LINE#         55
+  C:012FH         LINE#         56
+  C:013BH         LINE#         57
+  C:014DH         LINE#         58
+  C:015BH         LINE#         59
+  C:015EH         LINE#         60
+  C:0160H         LINE#         61
+  C:0162H         LINE#         62
+  C:0164H         LINE#         63
+  C:0166H         LINE#         64
+  -------         ENDPROC       SMG_PROCESS
+  -------         PROC          MAIN
+  C:01FEH         LINE#         67
+  C:01FEH         LINE#         68
+  C:01FEH         LINE#         69
+  C:0201H         LINE#         70
+  C:0204H         LINE#         72
+  C:0204H         LINE#         73
+  C:0204H         LINE#         74
+  C:0207H         LINE#         75
+  C:020AH         LINE#         76
+  -------         ENDPROC       MAIN
+  -------         PROC          T2INT
+  C:00F2H         LINE#         79
+  C:010FH         LINE#         81
+  C:0111H         LINE#         82
+  C:0114H         LINE#         83
+  -------         ENDPROC       T2INT
+  -------         ENDMOD        MAIN
+
+  -------         MODULE        TIMER
+BL51 BANKED LINKER/LOCATER V6.22                                                      09/16/2025  14:27:12  PAGE 5
+
+
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0080H         PUBLIC        P0
+  D:0090H         PUBLIC        P1
+  D:00A0H         PUBLIC        P2
+  D:00B0H         PUBLIC        P3
+  D:00C0H         PUBLIC        P4
+  D:00C8H         PUBLIC        P5
+  B:00A8H.7       PUBLIC        EA
+  D:00E8H         PUBLIC        P6
+  D:00F8H         PUBLIC        P7
+  D:00A8H         PUBLIC        IE
+  D:00B8H         PUBLIC        IP
+  D:00D8H         PUBLIC        CCON
+  D:0098H         PUBLIC        SCON
+  D:0088H         PUBLIC        TCON
+  D:00AFH         PUBLIC        IE2
+  D:008EH         PUBLIC        AUXR
+  C:01DBH         PUBLIC        Timer2Init
+  D:00D6H         PUBLIC        T2H
+  D:00D7H         PUBLIC        T2L
+  D:00D0H         PUBLIC        PSW
+  -------         PROC          TIMER2INIT
+  C:01DBH         LINE#         3
+  C:01DBH         LINE#         4
+  C:01DBH         LINE#         5
+  C:01DEH         LINE#         6
+  C:01E1H         LINE#         7
+  C:01E4H         LINE#         8
+  C:01E7H         LINE#         9
+  C:01EAH         LINE#         10
+  C:01ECH         LINE#         11
+  -------         ENDPROC       TIMER2INIT
+  -------         ENDMOD        TIMER
+
+  -------         MODULE        P2P0
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0080H         PUBLIC        P0
+  D:0090H         PUBLIC        P1
+  D:00A0H         PUBLIC        P2
+  D:00B0H         PUBLIC        P3
+  D:00C0H         PUBLIC        P4
+  D:00C8H         PUBLIC        P5
+  D:00E8H         PUBLIC        P6
+  D:00F8H         PUBLIC        P7
+  D:00A8H         PUBLIC        IE
+  D:00B8H         PUBLIC        IP
+  C:0218H         PUBLIC        _P2P0_ctrl
+  D:00D8H         PUBLIC        CCON
+  D:0098H         PUBLIC        SCON
+  D:0088H         PUBLIC        TCON
+  D:00D0H         PUBLIC        PSW
+  -------         PROC          _P2P0_CTRL
+  D:0007H         SYMBOL        p2data
+  D:0005H         SYMBOL        p0data
+  C:0218H         LINE#         3
+  C:0218H         LINE#         4
+  C:0218H         LINE#         5
+BL51 BANKED LINKER/LOCATER V6.22                                                      09/16/2025  14:27:12  PAGE 6
+
+
+  C:021AH         LINE#         6
+  C:021CH         LINE#         7
+  C:021FH         LINE#         8
+  -------         ENDPROC       _P2P0_CTRL
+  -------         ENDMOD        P2P0
+
+  -------         MODULE        SMG
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0080H         PUBLIC        P0
+  D:0090H         PUBLIC        P1
+  D:00A0H         PUBLIC        P2
+  D:00B0H         PUBLIC        P3
+  D:00C0H         PUBLIC        P4
+  D:00C8H         PUBLIC        P5
+  D:00E8H         PUBLIC        P6
+  D:00F8H         PUBLIC        P7
+  D:00A8H         PUBLIC        IE
+  D:00B8H         PUBLIC        IP
+  C:0197H         PUBLIC        smg_display
+  D:00D8H         PUBLIC        CCON
+  D:0098H         PUBLIC        SCON
+  D:0088H         PUBLIC        TCON
+  D:0009H         PUBLIC        smg_code
+  D:001BH         PUBLIC        smg_buf
+  D:00D0H         PUBLIC        PSW
+  -------         PROC          SMG_DISPLAY
+  -------         DO            
+  D:0008H         SYMBOL        k
+  -------         ENDDO         
+  C:0197H         LINE#         7
+  C:0197H         LINE#         8
+  C:0197H         LINE#         10
+  C:019EH         LINE#         11
+  C:01ABH         LINE#         12
+  C:01BEH         LINE#         13
+  C:01C5H         LINE#         14
+  -------         ENDPROC       SMG_DISPLAY
+  -------         ENDMOD        SMG
+
+  -------         MODULE        BTN
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0080H         PUBLIC        P0
+  D:0090H         PUBLIC        P1
+  D:00A0H         PUBLIC        P2
+  D:00B0H         PUBLIC        P3
+  D:00C0H         PUBLIC        P4
+  D:00C8H         PUBLIC        P5
+  D:00E8H         PUBLIC        P6
+  D:00F8H         PUBLIC        P7
+  D:00A8H         PUBLIC        IE
+  D:00B8H         PUBLIC        IP
+  D:00D8H         PUBLIC        CCON
+  D:0098H         PUBLIC        SCON
+  D:0088H         PUBLIC        TCON
+  D:0024H         PUBLIC        cont
+  C:0003H         PUBLIC        btn_read
+  D:0025H         PUBLIC        trg
+BL51 BANKED LINKER/LOCATER V6.22                                                      09/16/2025  14:27:12  PAGE 7
+
+
+  C:020CH         PUBLIC        btn_read_threeline
+  D:00D0H         PUBLIC        PSW
+  -------         PROC          BTN_READ
+  -------         DO            
+  D:0023H         SYMBOL        key_state
+  D:0007H         SYMBOL        key_io
+  D:0006H         SYMBOL        key_val
+  -------         ENDDO         
+  C:0003H         LINE#         7
+  C:0003H         LINE#         8
+  C:0003H         LINE#         10
+  C:0005H         LINE#         11
+  C:000AH         LINE#         12
+  C:0016H         LINE#         13
+  C:0016H         LINE#         14
+  C:0016H         LINE#         15
+  C:001BH         LINE#         16
+  C:001EH         LINE#         17
+  C:0020H         LINE#         18
+  C:0020H         LINE#         19
+  C:0025H         LINE#         20
+  C:0025H         LINE#         21
+  C:0028H         LINE#         22
+  C:002AH         LINE#         23
+  C:002DH         LINE#         24
+  C:002FH         LINE#         25
+  C:0032H         LINE#         26
+  C:0034H         LINE#         27
+  C:0037H         LINE#         28
+  C:0039H         LINE#         29
+  C:003CH         LINE#         30
+  C:003EH         LINE#         34
+  C:003EH         LINE#         35
+  C:0041H         LINE#         36
+  C:0044H         LINE#         37
+  C:0044H         LINE#         38
+  C:0044H         LINE#         39
+  C:0046H         LINE#         40
+  -------         ENDPROC       BTN_READ
+  -------         PROC          BTN_READ_THREELINE
+  -------         DO            
+  D:0007H         SYMBOL        read
+  -------         ENDDO         
+  C:020CH         LINE#         44
+  C:020CH         LINE#         45
+  C:020CH         LINE#         46
+  C:0210H         LINE#         47
+  C:0215H         LINE#         48
+  C:0217H         LINE#         49
+  -------         ENDPROC       BTN_READ_THREELINE
+  -------         ENDMOD        BTN
+
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?BTN_PROCESS?MAIN
+
+Program Size: data=41.0 xdata=0 code=540
+LINK/LOCATE RUN COMPLETE.  1 WARNING(S),  0 ERROR(S)

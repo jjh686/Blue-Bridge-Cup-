@@ -1,0 +1,6 @@
+".\Objects\STARTUP.obj",
+".\Objects\main.obj",
+".\Objects\P2P0.obj",
+".\Objects\Timer.obj" 
+TO ".\Objects\2025_9_15" 
+PRINT(".\Listings\2025_9_15.m51") RAMSIZE(256) 

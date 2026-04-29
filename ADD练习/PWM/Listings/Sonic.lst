@@ -1,0 +1,66 @@
+C51 COMPILER V9.56.0.0   SONIC                                                             03/04/2026 22:18:57 PAGE 1   
+
+
+C51 COMPILER V9.56.0.0, COMPILATION OF MODULE SONIC
+OBJECT MODULE PLACED IN .\Objects\Sonic.obj
+COMPILER INVOKED BY: D:\keil c51v956\C51\BIN\C51.EXE Library\Device\Sonic.c OMF2 OPTIMIZE(8,SPEED) REGFILE(.\Objects\IAP
+                    -15_Project.ORC) BROWSE INCDIR(.\Library\System;.\Library\Device) DEBUG PRINT(.\Listings\Sonic.lst) OBJECT(.\Objects\Soni
+                    -c.obj)
+
+line level    source
+
+   1          #include "Sonic.h"
+   2          
+   3          void Delay12us()                //@12.000MHz
+   4          {
+   5   1              unsigned char i;
+   6   1      
+   7   1              _nop_();
+   8   1              _nop_();
+   9   1              i = 33;
+  10   1              while (--i);
+  11   1      }
+  12          
+  13          void vSend_Wave()
+  14          {
+  15   1              u8 i;
+  16   1              for(i=0;i<8;i++)        //发送8个40kHz方波
+  17   1              {
+  18   2                      P10 = 1;
+  19   2                      Delay12us();
+  20   2                      P10 = 0;
+  21   2                      Delay12us();
+  22   2              }
+  23   1      }
+  24          
+  25          
+  26          u16 uiDistance_Get()
+  27          {
+  28   1              u16 dist;
+  29   1              vSend_Wave();           //发送8个40kHz方波
+  30   1              TH1 = 0; TL1 = 0;       //清零定时器1
+  31   1              TR1 = 1;                        //开启定时器1
+  32   1              while(P11 == 1);        //等待P11变成低电平
+  33   1              TR1 = 0;                        //关闭定时器1
+  34   1              dist = (TH1<<8|TL1)*0.017;      //计算距离，单位是cm
+  35   1      
+  36   1              return dist;
+  37   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     64    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

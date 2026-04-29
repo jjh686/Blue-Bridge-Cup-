@@ -1,0 +1,1 @@
+"library\device\smg.c" OPTIMIZE (8,SPEED) BROWSE INCDIR(.\library\device;.\library\system) DEBUG OBJECTEXTEND PRINT(.\Listings\smg.lst) OBJECT(.\Objects\smg.obj)

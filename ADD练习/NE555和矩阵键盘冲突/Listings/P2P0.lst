@@ -1,0 +1,32 @@
+C51 COMPILER V9.56.0.0   P2P0                                                              03/06/2026 13:06:45 PAGE 1   
+
+
+C51 COMPILER V9.56.0.0, COMPILATION OF MODULE P2P0
+OBJECT MODULE PLACED IN .\Objects\P2P0.obj
+COMPILER INVOKED BY: D:\keil c51v956\C51\BIN\C51.EXE library\device\P2P0.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\library\dev
+                    -ice;.\library\system) DEBUG OBJECTEXTEND PRINT(.\Listings\P2P0.lst) OBJECT(.\Objects\P2P0.obj)
+
+line level    source
+
+   1          #include "P2P0.h"
+   2          
+   3          void vP2P0_ctrl(u8 p2data,u8 p0data)
+   4          {
+   5   1              P0=p0data;
+   6   1              P2=(P2&0x1f)|p2data;
+   7   1              P2&=0x1f;
+   8   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     13    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,109 @@
+C51 COMPILER V9.56.0.0   MAIN                                                              09/16/2025 14:27:12 PAGE 1   
+
+
+C51 COMPILER V9.56.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: D:\keil c51v956\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\library\device;.\library\s
+                    -ystem) DEBUG OBJECTEXTEND PRINT(.\Listings\main.lst) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include "system.h"
+   2          
+   3          void system_init()
+   4          {
+   5   1              P2P0_ctrl(0xa0,0x00);
+   6   1              P2P0_ctrl(0x80,0xff);
+   7   1              P2P0_ctrl(0xc0,0x00);
+   8   1      }
+   9          
+  10          //状态机按键处理函数
+  11          u8 cnt_key;
+  12          u8 s_number;
+  13          void btn_process()
+  14          {
+  15   1              u8 key_val;
+  16   1              if(cnt_key==10)
+  17   1              {
+  18   2                      cnt_key=0;
+  19   2                      key_val = btn_read();
+  20   2                      if(key_val==4)
+  21   2                      {
+  22   3                              s_number++;
+  23   3                      }
+  24   2              }
+  25   1      }
+  26          
+  27          //三行按键法处理函数
+  28          void btn_process_threeline()
+  29          {
+  30   1              if(cnt_key==10)
+  31   1              {
+  32   2                      cnt_key=0;
+  33   2                      btn_read_threeline();
+  34   2                      if(trg & 0x08)                  //S4
+  35   2                      {
+  36   3                              s_number++;
+  37   3                      }
+  38   2                      if(trg & 0x04)                  //S5
+  39   2                      {
+  40   3                              s_number--;
+  41   3                      }
+  42   2                      if(trg & 0x02)                  //S6
+  43   2                      {
+  44   3                              s_number+=10;
+  45   3                      }
+  46   2                      if(trg & 0x01)                  //S7
+  47   2                      {
+  48   3                              s_number-=10;
+  49   3                      }
+  50   2              }
+  51   1      }
+  52          
+  53          //数码管操作函数
+  54          void smg_process()
+C51 COMPILER V9.56.0.0   MAIN                                                              09/16/2025 14:27:12 PAGE 2   
+
+  55          {
+  56   1              smg_buf[0]=smg_code[s_number/100];
+  57   1              smg_buf[1]=smg_code[s_number/10%10];
+  58   1              smg_buf[2]=smg_code[s_number%10];
+  59   1              smg_buf[3]=0x00;
+  60   1              smg_buf[4]=0x00;
+  61   1              smg_buf[5]=0x00;
+  62   1              smg_buf[6]=0x00;
+  63   1              smg_buf[7]=0x00;
+  64   1      }
+  65          
+  66          
+  67          void main()
+  68          {
+  69   1              system_init();
+  70   1              Timer2Init();
+  71   1              
+  72   1              while(1)
+  73   1              {
+  74   2                      smg_process();
+  75   2                      btn_process_threeline();
+  76   2              }
+  77   1      }
+  78          
+  79          void t2int() interrupt 12
+  80          {
+  81   1              cnt_key++;
+  82   1              smg_display();
+  83   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    217    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      2    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

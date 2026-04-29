@@ -1,0 +1,8 @@
+".\Objects\STARTUP.obj",
+".\Objects\main.obj",
+".\Objects\Timer.obj",
+".\Objects\P2P0.obj",
+".\Objects\smg.obj",
+".\Objects\btn.obj" 
+TO ".\Objects\btn" 
+PRINT(".\Listings\btn.m51") RAMSIZE(256) 

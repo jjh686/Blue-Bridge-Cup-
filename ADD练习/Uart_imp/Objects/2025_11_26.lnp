@@ -1,0 +1,6 @@
+".\Objects\STARTUP.obj",
+".\Objects\main.obj",
+".\Objects\p2p0.obj",
+".\Objects\Uart.obj" 
+TO ".\Objects\2025_11_26" 
+PRINT(".\Listings\2025_11_26.m51") RAMSIZE(256) 

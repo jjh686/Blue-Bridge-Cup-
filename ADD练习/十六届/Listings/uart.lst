@@ -1,0 +1,103 @@
+C51 COMPILER V9.56.0.0   UART                                                              04/10/2026 12:29:38 PAGE 1   
+
+
+C51 COMPILER V9.56.0.0, COMPILATION OF MODULE UART
+OBJECT MODULE PLACED IN .\Objects\uart.obj
+COMPILER INVOKED BY: D:\keil c51v956\C51\BIN\C51.EXE library\system\uart.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\library\dev
+                    -ice;.\library\system) DEBUG OBJECTEXTEND PRINT(.\Listings\uart.lst) OBJECT(.\Objects\uart.obj)
+
+line level    source
+
+   1          #include "uart.h"
+   2          
+   3          void UartInit(void)             //4800bps@12.000MHz
+   4          {
+   5   1              SCON = 0x50;            //8位数据,可变波特率
+   6   1              AUXR |= 0x40;           //定时器1时钟为Fosc,即1T
+   7   1              AUXR &= 0xFE;           //串口1选择定时器1为波特率发生器
+   8   1              TMOD &= 0x0F;           //设定定时器1为16位自动重装方式
+   9   1              TL1 = 0x8F;             //设定定时初值
+  10   1              TH1 = 0xFD;             //设定定时初值
+  11   1              ET1 = 0;                //禁止定时器1中断
+  12   1              TR1 = 1;                //启动定时器1
+  13   1              ES = 1;
+  14   1              EA = 1;
+  15   1      }
+  16          
+  17          
+  18          bit busy;
+  19          u8 rx_buf[RXBUF];
+  20          u8 cnt_rx=0;
+  21          bit rx_flag;
+  22          u8 rx_time=0;
+  23          /*----------------------------
+  24          UART 中断服务程序
+  25          -----------------------------*/
+  26          void Uart() interrupt 4
+  27          {
+  28   1          if (RI)
+  29   1          {
+  30   2              RI = 0;                 //清除RI位
+  31   2                      rx_time=0;
+  32   2                      rx_buf[cnt_rx++]=SBUF;
+  33   2                      if(rx_buf[cnt_rx-1]=='\n')
+  34   2                      {
+  35   3                              rx_flag=1;
+  36   3                              cnt_rx=0;
+  37   3                      }
+  38   2          }
+  39   1          if (TI)
+  40   1          {
+  41   2              TI = 0;                 //清除TI位
+  42   2              busy = 0;               //清忙标志
+  43   2          }
+  44   1      }
+  45          
+  46          void vRXkx_time()
+  47          {
+  48   1              rx_time++;
+  49   1              if(rx_time>=50)
+  50   1              {
+  51   2                      rx_time=0;
+  52   2                      cnt_rx=0;
+  53   2                      memset(rx_buf,'\0',sizeof(rx_buf));
+  54   2              }
+C51 COMPILER V9.56.0.0   UART                                                              04/10/2026 12:29:38 PAGE 2   
+
+  55   1      }
+  56          
+  57          /*---------------------------- 
+  58          发送串口数据
+  59          ----------------------------*/
+  60          void SendData(u8 dat)
+  61          {
+  62   1          while (busy);               //等待前面的数据发送完成
+  63   1          busy = 1;
+  64   1          SBUF = dat;                 //写数据到UART数据寄存器
+  65   1      }
+  66          
+  67          /*----------------------------
+  68          发送字符串
+  69          ----------------------------*/
+  70          void SendString(char *s)
+  71          {
+  72   1          while (*s)                  //检测字符串结束标志
+  73   1          {
+  74   2              SendData(*s++);         //发送当前字符
+  75   2          }
+  76   1      }
+  77          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    158    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      5       3
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      2    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

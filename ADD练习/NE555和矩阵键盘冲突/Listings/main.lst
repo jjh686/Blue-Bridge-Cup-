@@ -1,0 +1,95 @@
+C51 COMPILER V9.56.0.0   MAIN                                                              03/06/2026 13:06:45 PAGE 1   
+
+
+C51 COMPILER V9.56.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: D:\keil c51v956\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\library\device;.\library\s
+                    -ystem) DEBUG OBJECTEXTEND PRINT(.\Listings\main.lst) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include "system.h"
+   2          
+   3          void vSystem_init()
+   4          {
+   5   1              vP2P0_ctrl(0xa0,0);
+   6   1              vP2P0_ctrl(0x80,0xff);
+   7   1              vP2P0_ctrl(0xc0,0);
+   8   1      }
+   9          
+  10          u8 cnt_kbd;
+  11          u8 kbd_val;
+  12          void vKBD_Process()
+  13          {
+  14   1              if(cnt_kbd>=10)
+  15   1              {
+  16   2                      cnt_kbd=0;
+  17   2                      kbd_val=ucKBD_Read_State();
+  18   2              }
+  19   1      }
+  20          
+  21          u16 cnt_ne555;
+  22          u16 freq_ne555;
+  23          void vNE555_Process()
+  24          {
+  25   1              cnt_ne555++;
+  26   1              if(cnt_ne555>=100)
+  27   1              {
+  28   2                      cnt_ne555=0;
+  29   2                      freq_ne555=((TH0<<8)|TL0)*10;
+  30   2                      TL0=0;
+  31   2                      TH0=0; 
+  32   2              }       
+  33   1      }
+  34          
+  35          void Smg_Process()
+  36          {
+  37   1              smg_buf[0]=smg_code[freq_ne555/10000];
+  38   1              smg_buf[1]=smg_code[freq_ne555/1000%10];
+  39   1              smg_buf[2]=smg_code[freq_ne555/100%10];
+  40   1              smg_buf[3]=smg_code[freq_ne555/10%10];
+  41   1              smg_buf[4]=smg_code[freq_ne555%10];
+  42   1              smg_buf[5]=0x00;
+  43   1              if(kbd_val!=0)
+  44   1              {
+  45   2                      smg_buf[6]=smg_code[kbd_val/10];
+  46   2                      smg_buf[7]=smg_code[kbd_val%10];        
+  47   2              }
+  48   1      }
+  49          
+  50          void main()
+  51          {
+  52   1              vSystem_init();
+  53   1              Timer2Init();
+  54   1              vCounter0_Init();
+C51 COMPILER V9.56.0.0   MAIN                                                              03/06/2026 13:06:45 PAGE 2   
+
+  55   1              
+  56   1              while(1)
+  57   1              {
+  58   2                      Smg_Process();
+  59   2                      vKBD_Process();
+  60   2              }
+  61   1              
+  62   1      }
+  63          
+  64          void t2int() interrupt 12
+  65          {
+  66   1              cnt_kbd++;
+  67   1              vSmg_Display();
+  68   1              vNE555_Process();
+  69   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    300    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      6    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

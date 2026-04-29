@@ -1,0 +1,130 @@
+C51 COMPILER V9.56.0.0   MAIN                                                              03/04/2026 22:18:56 PAGE 1   
+
+
+C51 COMPILER V9.56.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: D:\keil c51v956\C51\BIN\C51.EXE main.c OMF2 OPTIMIZE(8,SPEED) REGFILE(.\Objects\IAP15_Project.ORC) 
+                    -BROWSE INCDIR(.\Library\System;.\Library\Device) DEBUG PRINT(.\Listings\main.lst) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          /*************************************************
+   2          File name:       【PWM】PWM输出
+   3          
+   4          Copyright (c) 电子设计工坊 dianshe.taobao.com
+   5          All rights reserved
+   6          *************************************************/
+   7          #include "system.h"
+   8          
+   9          /*
+  10            * @brief  系统初始化函数：关闭继电器、蜂鸣器
+  11            * @param  None
+  12            * @retval None
+  13            * @author dianshe.taobao.com
+  14            */
+  15          void vSystem_Init(void)
+  16          {
+  17   1              vDevice_Ctrl(0xa0,0);           /* 关闭蜂鸣器、继电器*/
+  18   1              vDevice_Ctrl(0x80,0xff);        /* 关闭LED*/
+  19   1      }
+  20          
+  21          //PWM输出函数，放在0.1ms中断里执行
+  22          u8 cnt_pwm=0;
+  23          u8 pwm_duty = 80;
+  24          u8 led_ctrl;
+  25          void vPWM_Prcocess()
+  26          {
+  27   1              cnt_pwm = cnt_pwm % 10 + 1;     //cnt_pwm的范围是1~10，共10个数，即定义了PWM的周期为1ms
+  28   1              if(cnt_pwm <= (pwm_duty/10))
+  29   1              {
+  30   2                      led_ctrl=0x55;
+  31   2                      
+  32   2                      smg_buf[0]=smg_code[12345/10000];
+  33   2                      smg_buf[1]=smg_code[12345/1000%10];     
+  34   2                      smg_buf[2]=smg_code[12345/100%10];      
+  35   2                      smg_buf[3]=smg_code[12345/10%10];       
+  36   2                      smg_buf[4]=smg_code[12345%10];  
+  37   2                      smg_buf[5]=0x00;        
+  38   2                      smg_buf[6]=0x00;
+  39   2                      smg_buf[7]=0x00;
+  40   2              }               
+  41   1              else
+  42   1              {
+  43   2                      led_ctrl=0xff;
+  44   2                      
+  45   2                      smg_buf[0]=0x00;
+  46   2                      smg_buf[1]=0x00;        
+  47   2                      smg_buf[2]=0x00;        
+  48   2                      smg_buf[3]=0x00;        
+  49   2                      smg_buf[4]=0x00;        
+  50   2                      smg_buf[5]=0x00;        
+  51   2                      smg_buf[6]=0x00;
+  52   2                      smg_buf[7]=0x00;
+  53   2              }
+  54   1      }
+C51 COMPILER V9.56.0.0   MAIN                                                              03/04/2026 22:18:56 PAGE 2   
+
+  55          
+  56          u8 cnt_btn;
+  57          void vBTN_Proc()
+  58          {
+  59   1              if(cnt_btn>=100)
+  60   1              {
+  61   2                      cnt_btn=0;
+  62   2                      vBTN_Read_ThreeLine();
+  63   2                      if(Trg_BTN&0x08)
+  64   2                      {
+  65   3                              pwm_duty=(pwm_duty+10)%110;
+  66   3                      }
+  67   2                      if(Trg_BTN&0x04)
+  68   2                      {
+  69   3                              pwm_duty=(pwm_duty-10)%110;
+  70   3                      }               
+  71   2              }
+  72   1              
+  73   1      }
+  74          
+  75          //数码管操作函数
+  76          void vSMG_Process()
+  77          {
+  78   1      
+  79   1      }
+  80          
+  81          void main(void)
+  82          {
+  83   1              vSystem_Init();
+  84   1              vTimer2_Init_100us();
+  85   1              while(1)
+  86   1              {
+  87   2                      vSMG_Process();
+  88   2                      vBTN_Proc();
+  89   2              }
+  90   1      }
+  91          
+  92          
+  93          //中断服务程序
+  94          void vTimer2_ISR() interrupt 12         //中断入口，仅操作实时性要求高的函数
+  95          {
+  96   1              cnt_btn++;
+  97   1              vSMG_Display();
+  98   1              vPWM_Prcocess();
+  99   1              vDevice_Ctrl(0x80,led_ctrl);
+ 100   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    220    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      4    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

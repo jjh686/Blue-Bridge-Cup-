@@ -1,0 +1,1 @@
+"library\device\onewire.c" OPTIMIZE (8,SPEED) BROWSE INCDIR(.\library\device;.\library\system) DEBUG OBJECTEXTEND PRINT(.\Listings\onewire.lst) OBJECT(.\Objects\onewire.obj)
