@@ -1,0 +1,1 @@
+"library\device\P2P0.c" OPTIMIZE (8,SPEED) BROWSE INCDIR(.\library\device;.\library\system) DEBUG OBJECTEXTEND PRINT(.\Listings\P2P0.lst) OBJECT(.\Objects\P2P0.obj)

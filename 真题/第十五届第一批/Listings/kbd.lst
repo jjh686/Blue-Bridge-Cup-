@@ -1,0 +1,74 @@
+C51 COMPILER V9.56.0.0   KBD                                                               04/11/2026 19:59:32 PAGE 1   
+
+
+C51 COMPILER V9.56.0.0, COMPILATION OF MODULE KBD
+OBJECT MODULE PLACED IN .\Objects\kbd.obj
+COMPILER INVOKED BY: D:\keil c51v956\C51\BIN\C51.EXE library\device\kbd.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\library\devi
+                    -ce;.\library\system) DEBUG OBJECTEXTEND PRINT(.\Listings\kbd.lst) OBJECT(.\Objects\kbd.obj)
+
+line level    source
+
+   1          #include "kbd.h"
+   2          
+   3          u8 ucKBD_Keyio_State()
+   4          {
+   5   1              u8 key_io=0;
+   6   1              P3=0xf0;P4=0xff;
+   7   1              if(P44==0) key_io=4;
+   8   1              if(P42==0) key_io=8;
+   9   1              if(P35==0) key_io=12;
+  10   1      //      if(P34==0) key_io=16;
+  11   1              
+  12   1              P3=0x0f;P4=0x00;
+  13   1              if(P33==0) key_io=key_io+0;
+  14   1              if(P32==0) key_io=key_io+1;
+  15   1              if(P31==0) key_io=key_io+2;
+  16   1              if(P30==0) key_io=key_io+3;
+  17   1              
+  18   1              return key_io;
+  19   1      }
+  20          
+  21          #define KEY_NO 0
+  22          #define KEY_DOWN 1
+  23          #define KEY_UP 2
+  24          u8 ucKBD_Read_State()
+  25          {
+  26   1              static u8 key_state=0;
+  27   1              u8 key_io=0,key_return=0;
+  28   1              key_io=ucKBD_Keyio_State();
+  29   1              switch(key_state)
+  30   1              {
+  31   2                      case KEY_NO:
+  32   2                              if(key_io) key_state=KEY_DOWN;
+  33   2                      break;
+  34   2                      case KEY_DOWN:
+  35   2                              if(key_io) 
+  36   2                              {
+  37   3                                      key_state=KEY_UP;
+  38   3                                      key_return=key_io;
+  39   3                              }
+  40   2                              else
+  41   2                                      key_state=KEY_NO;
+  42   2                              break;
+  43   2                      case KEY_UP:
+  44   2                              if(key_io==0) key_state=KEY_NO;
+  45   2                      break;
+  46   2              }
+  47   1              return key_return;
+  48   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     93    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+C51 COMPILER V9.56.0.0   KBD                                                               04/11/2026 19:59:32 PAGE 2   
+
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      1    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

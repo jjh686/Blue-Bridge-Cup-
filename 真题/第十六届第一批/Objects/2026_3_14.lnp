@@ -1,0 +1,11 @@
+".\Objects\STARTUP.obj",
+".\Objects\main.obj",
+".\Objects\timer.obj",
+".\Objects\p2p0.obj",
+".\Objects\smg.obj",
+".\Objects\kbd.obj",
+".\Objects\onewire.obj",
+".\Objects\iic.obj",
+".\Objects\sonic.obj" 
+TO ".\Objects\2026_3_14" 
+PRINT(".\Listings\2026_3_14.m51") RAMSIZE(256) 

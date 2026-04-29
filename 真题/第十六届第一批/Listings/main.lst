@@ -1,0 +1,334 @@
+C51 COMPILER V9.56.0.0   MAIN                                                              03/15/2026 13:54:44 PAGE 1   
+
+
+C51 COMPILER V9.56.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: D:\keil c51v956\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\library\device;.\library\s
+                    -ystem) DEBUG OBJECTEXTEND PRINT(.\Listings\main.lst) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include "system.h"
+   2          
+   3          u8 disp_mode;
+   4          u8 k,c,d,e,f,temp_ck=30,h=0,dist_ck=30,j,l,m;
+   5          s16 g;
+   6          u16 a[2]={0},i;
+   7          void vSystem_Init()
+   8          {
+   9   1              vP2P0_Ctrl(0xa0,0);
+  10   1              vP2P0_Ctrl(0x80,0xff);
+  11   1              vP2P0_Ctrl(0xe0,0xff);
+  12   1      }
+  13          
+  14          u8 cnt_KBD;
+  15          u8 key_val;
+  16          void vKBD_Proc()
+  17          {
+  18   1              if(cnt_KBD>=10)
+  19   1              {
+  20   2                      cnt_KBD=0;
+  21   2                      key_val=KBD_Keyio_Read();
+  22   2                      if(key_val==4)
+  23   2                      {       disp_mode=(disp_mode+1)%4;
+  24   3                              if(disp_mode==2)
+  25   3                                      h=0;
+  26   3                      }
+  27   2                      if(key_val==5)
+  28   2                              if(disp_mode==2)
+  29   2                                      h=(h+1)%2;
+  30   2                      if(key_val==8)
+  31   2                      {
+  32   3                              if(disp_mode==2)
+  33   3                              {
+  34   4                                      if(h==0&&temp_ck<80)
+  35   4                                              temp_ck+=1;
+  36   4                                      if(h==1&&dist_ck<80)
+  37   4                                              dist_ck+=5;                             
+  38   4                              }
+  39   3                      }
+  40   2                      if(key_val==9)
+  41   2                      {
+  42   3                              if(disp_mode==2)
+  43   3                              {
+  44   4                                      if(h==0&&temp_ck>20)
+  45   4                                              temp_ck-=1;
+  46   4                                      if(h==1&&dist_ck>20)
+  47   4                                              dist_ck-=5;                                     
+  48   4                              }
+  49   3                      }
+  50   2              }
+  51   1      }
+  52          
+  53          u8 cnt_ds18b20;
+  54          u16 read_temp;
+C51 COMPILER V9.56.0.0   MAIN                                                              03/15/2026 13:54:44 PAGE 2   
+
+  55          void vDs18b20_Proc()
+  56          {
+  57   1              u16 temp;
+  58   1              if(cnt_ds18b20>=100)
+  59   1              {
+  60   2                      cnt_ds18b20=0;
+  61   2                      temp=(u16)ucRd_Temp();
+  62   2                      if(temp != 85 && temp < 120) // 过滤掉默认值和错误断线值
+  63   2                              read_temp = temp;
+  64   2              }
+  65   1      }
+  66          
+  67          u8 cnt_adc;
+  68          u8 ch1;
+  69          void vAdc_Proc()
+  70          {
+  71   1              float adc_val;
+  72   1              if(cnt_adc>=50)
+  73   1              {
+  74   2                      cnt_adc=0;
+  75   2                      EA=0;
+  76   2                      ch1=vread_adc(0x41);
+  77   2                      EA=1;
+  78   2                      adc_val=(float)ch1*4.0/255;
+  79   2                      if(adc_val>=3.0)
+  80   2                              k=1;
+  81   2                      else if(adc_val>=2.0)
+  82   2                              k=2;
+  83   2                      else if(adc_val>=0.5)
+  84   2                              k=3;
+  85   2                      else
+  86   2                              k=4;
+  87   2              }
+  88   1      }
+  89          
+  90          u16 cnt_sonic;
+  91          u16 dist_sonic=999;
+  92          void vSonic_Proc()
+  93          {
+  94   1              u16 temp_dist;
+  95   1              if(cnt_sonic>=1000)
+  96   1              {
+  97   2                      cnt_sonic=0;
+  98   2                      temp_dist=ucDistance_Get();
+  99   2                      if(temp_dist!=0)
+ 100   2                              dist_sonic=temp_dist;
+ 101   2                      a[1]=a[0];
+ 102   2                      a[0]=dist_sonic;
+ 103   2                      if(d==0)
+ 104   2                      {
+ 105   3                              g=a[0]-a[1];
+ 106   3                              if(g<0)
+ 107   3                                      g=-g;
+ 108   3                                      f=c;
+ 109   3                                      if(g<5)
+ 110   3                                              c=1;
+ 111   3                                      else if(g<10)
+ 112   3                                              c=2;
+ 113   3                                      else
+ 114   3                                              c=3;
+ 115   3                                      if(f==c)
+ 116   3                                              d=0;
+C51 COMPILER V9.56.0.0   MAIN                                                              03/15/2026 13:54:44 PAGE 3   
+
+ 117   3                                      else
+ 118   3                                      {
+ 119   4                                              d=1;
+ 120   4                                      }
+ 121   3                      }
+ 122   2                      if(d==1)
+ 123   2                              e++;
+ 124   2                      if(e==3)
+ 125   2                      {
+ 126   3                              e=0;
+ 127   3                              d=0;
+ 128   3                      }
+ 129   2              }
+ 130   1      }
+ 131          
+ 132          u16 cnt_realy;
+ 133          void vRelay_Ctrl()
+ 134          {
+ 135   1              u8 key_state_cor=P3&0x0c,key_state_ver=P4&0x04;
+ 136   1              if(read_temp>temp_ck&&dist_sonic<dist_ck)
+ 137   1              {
+ 138   2                      vP2P0_Ctrl(0xa0,0x10);
+ 139   2                      if(j==0)
+ 140   2                              i++;
+ 141   2                      j=1;
+ 142   2              }
+ 143   1              else
+ 144   1              {
+ 145   2                      vP2P0_Ctrl(0xa0,0x00);
+ 146   2                      j=0;
+ 147   2              }
+ 148   1              if(key_state_cor==0x00&&key_state_ver==0x00&&disp_mode==3)
+ 149   1              {
+ 150   2                      l=1;
+ 151   2                      if(cnt_realy>=2000)
+ 152   2                              i=0;
+ 153   2              }
+ 154   1              else
+ 155   1                      l=0;
+ 156   1      }
+ 157          
+ 158          u8 led_ctrl;
+ 159          u8 led_cnt;
+ 160          void vLED_Proc()
+ 161          {
+ 162   1              static u8 n=0;
+ 163   1              
+ 164   1              led_ctrl = 0xff; // 第一步：进来先默认全部熄灭，后面只管“点亮”谁
+ 165   1      
+ 166   1              // 处理 L1 ~ L4
+ 167   1              if(dist_sonic < dist_ck)
+ 168   1              {
+ 169   2                      if(k==1)      led_ctrl &= ~0x01; // 只亮L1
+ 170   2                      else if(k==2) led_ctrl &= ~0x03; // 亮L1, L2
+ 171   2                      else if(k==3) led_ctrl &= ~0x07; // 亮L1, L2, L3
+ 172   2                      else if(k==4) led_ctrl &= ~0x0f; // 亮L1-L4
+ 173   2              }
+ 174   1      
+ 175   1              // 处理 L8
+ 176   1              if(c==1)
+ 177   1              {
+ 178   2                      led_ctrl |= 0x80; // 熄灭L8 (因为上面已经是0xff了，这句写上只为逻辑清晰)
+C51 COMPILER V9.56.0.0   MAIN                                                              03/15/2026 13:54:44 PAGE 4   
+
+ 179   2                      m = 0; // 重置闪烁标志
+ 180   2              }
+ 181   1              else if(c==2)
+ 182   1              {
+ 183   2                      led_ctrl &= ~0x80; // 强制点亮L8
+ 184   2                      m = 0;
+ 185   2              }
+ 186   1              else if(c==3)
+ 187   1              {
+ 188   2                      m = 1; // 开启闪烁计数
+ 189   2                      if(led_cnt >= 100)
+ 190   2                      {
+ 191   3                              led_cnt = 0;
+ 192   3                              n = ~n;
+ 193   3                      }
+ 194   2                      if(n == 0) led_ctrl |= 0x80;
+ 195   2                      else       led_ctrl &= ~0x80;
+ 196   2              }
+ 197   1              else
+ 198   1              {
+ 199   2                      m = 0; // 其他情况务必清零 m，否则定时器里的 led_cnt 会一直乱加
+ 200   2              }
+ 201   1              
+ 202   1              vP2P0_Ctrl(0x80, led_ctrl);
+ 203   1      }
+ 204          
+ 205          void vSmg_proc()
+ 206          {
+ 207   1              if(disp_mode==0)
+ 208   1              {
+ 209   2                      smg_buf[0]=0x39;
+ 210   2                      smg_buf[1]=smg_code[read_temp/10];
+ 211   2                      smg_buf[2]=smg_code[read_temp%10];
+ 212   2                      smg_buf[3]=0x00;
+ 213   2                      smg_buf[4]=0x00;
+ 214   2                      smg_buf[5]=0x00;
+ 215   2                      smg_buf[6]=0x37;
+ 216   2                      smg_buf[7]=smg_code[k];         
+ 217   2              }
+ 218   1              if(disp_mode==1)
+ 219   1              {
+ 220   2                      smg_buf[0]=0x38;
+ 221   2                      smg_buf[1]=smg_code[c];
+ 222   2                      smg_buf[2]=0x00;
+ 223   2                      smg_buf[3]=0x00;
+ 224   2                      smg_buf[4]=0x00;
+ 225   2                      smg_buf[5]=smg_code[dist_sonic/100];
+ 226   2                      smg_buf[6]=smg_code[dist_sonic/10%10];
+ 227   2                      smg_buf[7]=smg_code[dist_sonic%10];                     
+ 228   2              }
+ 229   1              if(disp_mode==2)
+ 230   1              {
+ 231   2                      if(h==0)
+ 232   2                      {
+ 233   3                              smg_buf[0]=0x73;
+ 234   3                              smg_buf[1]=0x39;
+ 235   3                              smg_buf[2]=0x00;
+ 236   3                              smg_buf[3]=0x00;
+ 237   3                              smg_buf[4]=0x00;
+ 238   3                              smg_buf[5]=0x00;
+ 239   3                              smg_buf[6]=smg_code[temp_ck/10];        
+ 240   3                              smg_buf[7]=smg_code[temp_ck%10];                                
+C51 COMPILER V9.56.0.0   MAIN                                                              03/15/2026 13:54:44 PAGE 5   
+
+ 241   3                      }
+ 242   2                      if(h==1)
+ 243   2                      {
+ 244   3                              smg_buf[0]=0x73;
+ 245   3                              smg_buf[1]=0x38;
+ 246   3                              smg_buf[2]=0x00;
+ 247   3                              smg_buf[3]=0x00;
+ 248   3                              smg_buf[4]=0x00;
+ 249   3                              smg_buf[5]=0x00;
+ 250   3                              smg_buf[6]=smg_code[dist_ck/10];        
+ 251   3                              smg_buf[7]=smg_code[dist_ck%10];                                
+ 252   3                      }
+ 253   2              }
+ 254   1              if(disp_mode==3)
+ 255   1              {
+ 256   2                              smg_buf[0]=0x37;
+ 257   2                              smg_buf[1]=0x39;
+ 258   2                              smg_buf[2]=0x00;
+ 259   2                              smg_buf[3]=0x00;
+ 260   2                              smg_buf[4]=smg_code[(i>=1000) ? (i/1000) : 10];
+ 261   2                              smg_buf[5]=smg_code[(i>=100) ? (i/100%10) : 10];
+ 262   2                              smg_buf[6]=smg_code[(i>=10) ? (i/10%10) : 10];  
+ 263   2                              smg_buf[7]=smg_code[i%10];              
+ 264   2              }
+ 265   1      }
+ 266          
+ 267          void main()
+ 268          {
+ 269   1              vSystem_Init();
+ 270   1              Timer2Init();
+ 271   1              while((u8)ucRd_Temp()==85);
+ 272   1              
+ 273   1              while(1)
+ 274   1              {
+ 275   2                      vSmg_proc();
+ 276   2                      vKBD_Proc();
+ 277   2                      vDs18b20_Proc();
+ 278   2                      vAdc_Proc();
+ 279   2                      vSonic_Proc();
+ 280   2              }
+ 281   1      }
+ 282          
+ 283          void vTimer2_init() interrupt 12
+ 284          {
+ 285   1              vSmg_Disp();
+ 286   1              cnt_KBD++;
+ 287   1              cnt_ds18b20++;
+ 288   1              cnt_adc++;
+ 289   1              cnt_sonic++;
+ 290   1              vRelay_Ctrl();
+ 291   1              if(l==1)
+ 292   1                      cnt_realy++;
+ 293   1              else 
+ 294   1                      cnt_realy=0;
+ 295   1              vLED_Proc();
+ 296   1              if(m==1)
+ 297   1                      led_cnt++;
+ 298   1              else
+ 299   1                      led_cnt=0;
+ 300   1      }
+
+
+C51 COMPILER V9.56.0.0   MAIN                                                              03/15/2026 13:54:44 PAGE 6   
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   1235    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     36       6
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

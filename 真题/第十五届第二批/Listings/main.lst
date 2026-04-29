@@ -1,0 +1,270 @@
+C51 COMPILER V9.56.0.0   MAIN                                                              04/06/2026 22:06:11 PAGE 1   
+
+
+C51 COMPILER V9.56.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: D:\keil c51v956\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\library\device;.\library\s
+                    -ystem) DEBUG OBJECTEXTEND PRINT(.\Listings\main.lst) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include "system.h"
+   2          
+   3          u8 disp_mode,dacsc_mode,kbd_lval,k,h,s13_long_flag = 0;
+   4          s8 temp_jz,temp_jz_active;
+   5          u16 cnt_s13;
+   6          
+   7          float temp_fl,temp_fljs[2]={0},temp_fljs_cz;
+   8                  
+   9          void vSystem_init()
+  10          {
+  11   1              vP2P0_Ctrl(0x80,0xff);
+  12   1              vP2P0_Ctrl(0xa0,0);
+  13   1              vP2P0_Ctrl(0xe0,0xff);
+  14   1      }
+  15          
+  16          u8 cnt_DAC;
+  17          u8 dac_val_temp,dac_val_hand=100;
+  18          void vDAC_Proc()
+  19          {
+  20   1              if(cnt_DAC>=2)
+  21   1              {
+  22   2                      cnt_DAC=0;
+  23   2                      if(dacsc_mode==0)
+  24   2                      {
+  25   3                              if(temp_fl<10.f)
+  26   3                                      dac_val_temp=102;
+  27   3                              else if(temp_fl>40.f)
+  28   3                                      dac_val_temp=255;
+  29   3                              else
+  30   3                              dac_val_temp=(u8)(5.1f*temp_fl+51.f);
+  31   3                              vDAC_Write(dac_val_temp);                       
+  32   3                      }
+  33   2                      if(dacsc_mode==1)
+  34   2                      {
+  35   3                              vDAC_Write(dac_val_hand);
+  36   3                      }
+  37   2              }
+  38   1      }
+  39          
+  40          u8 cnt_temp;
+  41          void vTemp_Proc()
+  42          {
+  43   1              if(cnt_temp>=100)
+  44   1              {
+  45   2                      cnt_temp=0;
+  46   2                      temp_fl=ucTemp_Read();
+  47   2                      temp_fl=temp_fl+(float)temp_jz_active;                  
+  48   2                      temp_fljs[1]=temp_fljs[0];
+  49   2                      temp_fljs[0]=temp_fl;
+  50   2                      temp_fljs_cz=temp_fljs[0]-temp_fljs[1];
+  51   2                      if(temp_fljs_cz<0.f)
+  52   2                              temp_fljs_cz=-temp_fljs_cz;
+  53   2              }
+  54   1      }
+C51 COMPILER V9.56.0.0   MAIN                                                              04/06/2026 22:06:11 PAGE 2   
+
+  55          
+  56          u8 cnt_kbd;
+  57          u8 kbd_val;
+  58          void vKBD_Proc()
+  59          {
+  60   1              if(cnt_kbd>=10)
+  61   1              {
+  62   2                      cnt_kbd=0;
+  63   2                      kbd_val=ucKbd_keyio_Read();
+  64   2                      if(kbd_val==12)
+  65   2                      {
+  66   3                              if(disp_mode==2)
+  67   3                                      temp_jz_active=temp_jz;
+  68   3                              disp_mode=(disp_mode+1)%3;
+  69   3                      }
+  70   2                      else if(kbd_val==16)
+  71   2                      {
+  72   3                              if(disp_mode==2&&temp_jz<9)
+  73   3                                      temp_jz+=1;
+  74   3                              if(disp_mode==1&&dac_val_hand<255)
+  75   3                                      dac_val_hand+=5;
+  76   3                              if(disp_mode==0&&k==0)
+  77   3                                      vP2P0_Ctrl(0xa0,0x10);
+  78   3                      }
+  79   2                      else if(kbd_val==17)
+  80   2                      {
+  81   3                              if(disp_mode==2&&temp_jz>-9)
+  82   3                                      temp_jz-=1;                     
+  83   3                              if(disp_mode==1&&dac_val_hand>0)
+  84   3                                      dac_val_hand-=5;
+  85   3                              if(disp_mode==0&&k==0)
+  86   3                                      vP2P0_Ctrl(0xa0,0x00);
+  87   3                      }
+  88   2                      else if(kbd_val==13)
+  89   2                              if(s13_long_flag == 1) {
+  90   3                                      // 如果刚刚发生过长按，这里只是松手，清除标志位，什么也不做
+  91   3                                      s13_long_flag = 0; 
+  92   3                              } else {
+  93   3                                      // 只有没发生长按的正常松手，才算作短按
+  94   3                                      dacsc_mode=(dacsc_mode+1)%2;
+  95   3                              }
+  96   2              }
+  97   1      }
+  98          
+  99          
+ 100          void vRelay_Ctrl()
+ 101          {
+ 102   1              kbd_lval=ucKbd_keyio_state();
+ 103   1              if(kbd_lval==13)
+ 104   1                      cnt_s13++;
+ 105   1              else
+ 106   1                      cnt_s13=0;      
+ 107   1              if(cnt_s13>=1500)
+ 108   1              {
+ 109   2                      h=1;
+ 110   2                      s13_long_flag = 1;
+ 111   2              }
+ 112   1                      
+ 113   1              if(h==1&&kbd_lval!=13)
+ 114   1              {
+ 115   2                      k=~k;
+ 116   2                      h=0;
+C51 COMPILER V9.56.0.0   MAIN                                                              04/06/2026 22:06:11 PAGE 3   
+
+ 117   2              }
+ 118   1      }
+ 119          
+ 120          u16 cnt_l2,cnt_l3,cnt_l4,cnt_l4_400;
+ 121          u8 l2_locate,led_ctrl=0xff,l3_locate,temptb_loc;
+ 122          void vLED_Proc()
+ 123          {
+ 124   1              if(dacsc_mode==0)
+ 125   1                      led_ctrl&=~0x01;
+ 126   1              else
+ 127   1                      led_ctrl|=0x01;
+ 128   1              if(temp_fljs[0]-temp_fljs[1]>0.f&&l2_locate==0)
+ 129   1                      l2_locate=1;
+ 130   1              if(l2_locate==1)
+ 131   1              {
+ 132   2                      cnt_l2++;
+ 133   2                      led_ctrl&=~0x02;
+ 134   2              }
+ 135   1              if(cnt_l2>=2000)
+ 136   1              {
+ 137   2                      cnt_l2=0;
+ 138   2                      l2_locate=0;
+ 139   2                      led_ctrl|=0x02;
+ 140   2              }
+ 141   1              if(temp_fljs[0]-temp_fljs[1]<0.f&&l3_locate==0)
+ 142   1                      l3_locate=1;
+ 143   1              if(l3_locate==1)
+ 144   1              {
+ 145   2                      cnt_l3++;
+ 146   2                      led_ctrl&=~0x04;
+ 147   2              }
+ 148   1              if(cnt_l3>=2000)
+ 149   1              {
+ 150   2                      cnt_l3=0;
+ 151   2                      l3_locate=0;
+ 152   2                      led_ctrl|=0x04;
+ 153   2              }
+ 154   1              if(temp_fljs_cz>1.f&&temptb_loc==0)
+ 155   1                      temptb_loc=1;
+ 156   1              if(temptb_loc==1)
+ 157   1              {
+ 158   2                      cnt_l4++;
+ 159   2                      cnt_l4_400=cnt_l4%400;
+ 160   2                      if((cnt_l4_400)<=200)
+ 161   2                              led_ctrl&=~0x08;
+ 162   2                      else if((cnt_l4_400)<=400)
+ 163   2                              led_ctrl|=0x08;
+ 164   2                      if(cnt_l4>=3000)
+ 165   2                      {
+ 166   3                              cnt_l4=0;
+ 167   3                              temptb_loc=0;
+ 168   3                              led_ctrl|=0x08;
+ 169   3                      }
+ 170   2              }
+ 171   1              if(k==0)
+ 172   1                      led_ctrl&=~0x80;
+ 173   1              else
+ 174   1                      led_ctrl|=0x80;
+ 175   1              vP2P0_Ctrl(0x80,led_ctrl);
+ 176   1      }
+ 177          
+ 178          void vSmg_Process()
+C51 COMPILER V9.56.0.0   MAIN                                                              04/06/2026 22:06:11 PAGE 4   
+
+ 179          {
+ 180   1              if(disp_mode==0)
+ 181   1              {
+ 182   2                      smg_buf[0]=0x39;
+ 183   2                      smg_buf[1]=0x00;
+ 184   2                      smg_buf[2]=0x00;
+ 185   2                      smg_buf[3]=0x00;
+ 186   2                      smg_buf[4]=0x00;
+ 187   2                      smg_buf[5]=0x00;
+ 188   2                      smg_buf[6]=smg_code[(u8)temp_fl/10];
+ 189   2                      smg_buf[7]=smg_code[(u8)temp_fl%10];            
+ 190   2              }
+ 191   1              else if(disp_mode==1)
+ 192   1              {
+ 193   2                      smg_buf[0]=0x77;
+ 194   2                      smg_buf[1]=0x00;
+ 195   2                      smg_buf[2]=0x00;
+ 196   2                      smg_buf[3]=0x00;
+ 197   2                      smg_buf[4]=0x00;
+ 198   2                      smg_buf[5]=smg_code[(dac_val_hand>=100) ? (dac_val_hand/100) : 10];
+ 199   2                      smg_buf[6]=smg_code[(dac_val_hand>=10) ? (dac_val_hand/10%10) : 10];
+ 200   2                      smg_buf[7]=smg_code[dac_val_hand%10];                   
+ 201   2              }
+ 202   1              else if(disp_mode==2)
+ 203   1              {
+ 204   2                      smg_buf[0]=0x73;
+ 205   2                      smg_buf[1]=0x00;
+ 206   2                      smg_buf[2]=0x00;
+ 207   2                      smg_buf[3]=0x00;
+ 208   2                      smg_buf[4]=0x00;
+ 209   2                      smg_buf[5]=0x00;
+ 210   2                      smg_buf[6]=smg_code[(temp_jz<0) ? 11 : 10];
+ 211   2                      smg_buf[7]=smg_code[(temp_jz<0) ? -temp_jz : temp_jz];                  
+ 212   2              }
+ 213   1      }
+ 214          
+ 215          void main()
+ 216          {
+ 217   1              vSystem_init();
+ 218   1              Timer2Init();
+ 219   1              while((u8)ucTemp_Read()==85);
+ 220   1              
+ 221   1              while(1)
+ 222   1              {
+ 223   2                      vSmg_Process();
+ 224   2                      vDAC_Proc();
+ 225   2                      vTemp_Proc();
+ 226   2                      vKBD_Proc();
+ 227   2              }
+ 228   1      }
+ 229          
+ 230          void vTimer2_init() interrupt 12
+ 231          {
+ 232   1              vSmg_disp();
+ 233   1              cnt_temp++;
+ 234   1              cnt_DAC++;
+ 235   1              cnt_kbd++;
+ 236   1              vRelay_Ctrl();
+ 237   1              vLED_Proc();
+ 238   1      }
+
+
+C51 COMPILER V9.56.0.0   MAIN                                                              04/06/2026 22:06:11 PAGE 5   
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   1105    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     44    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

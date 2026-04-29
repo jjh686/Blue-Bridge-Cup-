@@ -1,0 +1,383 @@
+C51 COMPILER V9.56.0.0   MAIN                                                              04/11/2026 20:19:44 PAGE 1   
+
+
+C51 COMPILER V9.56.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: D:\keil c51v956\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\library\deivce;.\library\s
+                    -ystem) DEBUG OBJECTEXTEND PRINT(.\Listings\main.lst) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include "system.h"
+   2          
+   3          void System_init()
+   4          {
+   5   1              P2P0_ctrl(0x80,0xff);
+   6   1              P2P0_ctrl(0xa0,0x00);
+   7   1      }
+   8          
+   9          #define Disp_zb 0
+  10          #define Disp_sped 1
+  11          #define Disp_para 2
+  12          u8 Disp_mode=Disp_zb;
+  13          #define State_RUN 0
+  14          #define State_IDLE 1
+  15          #define State_Wait 2
+  16          u8 sped_state=State_IDLE;
+  17          
+  18          float r_para=1.0;
+  19          float r_para_true=1.0;
+  20          u8 r_para_disp;
+  21          char b_para=0;
+  22          char b_para_true=0;
+  23          bit para_set=0;
+  24          
+  25          u16 x_tar=0,y_tar=0;
+  26          u16 x_dev=0,y_dev=0;
+  27          
+  28          float sped=0;
+  29          u32 sped_dis=0;
+  30          
+  31          bit rec_flag=0;
+  32          bit bar_flag=0;
+  33          
+  34          u16 cnt_ne555,ne555_val;
+  35          
+  36          void vSped_Proc()
+  37          {
+  38   1              sped=3.14f*r_para_true*ne555_val/100.0f+b_para_true;
+  39   1              if(sped<0)
+  40   1                      sped=0;
+  41   1      }
+  42          
+  43          u8 cnt_kbd=0,key_val=0;
+  44          void vKBD_Proc()
+  45          {
+  46   1              if(cnt_kbd>=20)
+  47   1              {
+  48   2                      cnt_kbd=0;
+  49   2                      key_val=ucKBD_Keyio_Read();
+  50   2                      if(key_val==4)
+  51   2                      {
+  52   3                              if(rec_flag==1&&sped_state==State_IDLE)
+  53   3                              {
+  54   4                                      sped_state=State_RUN;
+C51 COMPILER V9.56.0.0   MAIN                                                              04/11/2026 20:19:44 PAGE 2   
+
+  55   4                                      rec_flag=0;
+  56   4                              }
+  57   3                              else if(sped_state==State_RUN)
+  58   3                                      sped_state=State_Wait;
+  59   3                              else if(sped_state==State_Wait&&bar_flag==0)
+  60   3                                      sped_state=State_RUN;
+  61   3                      }
+  62   2                      if(key_val==5)
+  63   2                      {
+  64   3                              if(sped_state==State_IDLE)
+  65   3                              {
+  66   4                                      x_dev=0,y_dev=0;
+  67   4                              }
+  68   3                      }
+  69   2                      if(key_val==8)
+  70   2                      {
+  71   3                               Disp_mode=(Disp_mode+1)%3;
+  72   3                           if(Disp_mode==Disp_para)
+  73   3                                       para_set=0;
+  74   3                               if(Disp_mode==Disp_zb)
+  75   3                               {
+  76   4                                       r_para_true=r_para;
+  77   4                                       b_para_true=b_para;
+  78   4                               }
+  79   3                      }
+  80   2                      if(key_val==9)
+  81   2                      {
+  82   3                              if(Disp_mode==Disp_para)
+  83   3                              {
+  84   4                                      para_set=!para_set;
+  85   4                              }
+  86   3                      }
+  87   2                      if(key_val==12)
+  88   2                      {
+  89   3                              if(Disp_mode==Disp_para)
+  90   3                              {
+  91   4                                      if(para_set==0&&r_para<2.0f)
+  92   4                                              r_para+=0.1f;
+  93   4                                      if(para_set==1&&b_para<90)
+  94   4                                              b_para+=5;
+  95   4                              }
+  96   3                      }
+  97   2                      if(key_val==13)
+  98   2                      {
+  99   3                              if(Disp_mode==Disp_para)
+ 100   3                              {
+ 101   4                                      if(para_set==0&&r_para>1.0f)
+ 102   4                                              r_para-=0.1f;
+ 103   4                                      if(para_set==1&&b_para>-90)
+ 104   4                                              b_para-=5;
+ 105   4                              }
+ 106   3                      }
+ 107   2              }
+ 108   1      }
+ 109          
+ 110          u8 cnt_adc=0,ch1=0;
+ 111          void vADC_Proc()
+ 112          {
+ 113   1              if(cnt_adc>=10)
+ 114   1              {
+ 115   2                      cnt_adc=0;
+ 116   2                      ch1=ucADC_Read(0x41);
+C51 COMPILER V9.56.0.0   MAIN                                                              04/11/2026 20:19:44 PAGE 3   
+
+ 117   2              }
+ 118   1      }
+ 119          
+ 120          u16 cnt_sonic,dist_val;
+ 121          void vSonic_Proc()
+ 122          {
+ 123   1              if(cnt_sonic>=100)
+ 124   1              {
+ 125   2                      cnt_sonic=0;
+ 126   2                      dist_val=ucDist_Get();
+ 127   2              }
+ 128   1      }
+ 129          
+ 130          void vNE555_Proc()
+ 131          {
+ 132   1              if(cnt_ne555>=1000)
+ 133   1              {
+ 134   2                      cnt_ne555=0;
+ 135   2                      ne555_val=(TH0<<8)|TL0;
+ 136   2                      TH0=0;
+ 137   2                      TL0=0;
+ 138   2              }
+ 139   1      }
+ 140          
+ 141          void SendNb(u16 num)
+ 142          {
+ 143   1              if(num>=100)
+ 144   1              {
+ 145   2                      SendData(num/100+'0');
+ 146   2                      SendData(num/10%10+'0');
+ 147   2                      SendData(num%10+'0');
+ 148   2              }
+ 149   1              else if(num>=10)
+ 150   1              {
+ 151   2                      SendData(num/10%10+'0');
+ 152   2                      SendData(num%10+'0');
+ 153   2              }
+ 154   1              else
+ 155   1              {
+ 156   2                      SendData(num%10+'0');
+ 157   2              }
+ 158   1      }
+ 159          
+ 160          u8 rx_len;
+ 161          void vUART_Proc()
+ 162          {
+ 163   1              u8 i=0,j=0;
+ 164   1              char x_tar_str[4]={0},y_tar_str[4]={0};
+ 165   1              if(rx_flag==1)
+ 166   1              {
+ 167   2                      rx_flag=0;
+ 168   2      
+ 169   2                      if(rx_buf[0]=='?')
+ 170   2                      {
+ 171   3                              if(sped_state==State_RUN)
+ 172   3                                      SendString("Busy");
+ 173   3                              else if(sped_state==State_IDLE)
+ 174   3                                      SendString("Idle");
+ 175   3                              else if(sped_state==State_Wait)
+ 176   3                                      SendString("Wait");
+ 177   3                      }
+ 178   2                      else if(rx_buf[0]=='#')
+C51 COMPILER V9.56.0.0   MAIN                                                              04/11/2026 20:19:44 PAGE 4   
+
+ 179   2                      {
+ 180   3                              SendData('(');
+ 181   3                              SendNb(x_dev);
+ 182   3                              SendData(',');
+ 183   3                              SendNb(y_dev);
+ 184   3                              SendData(')');
+ 185   3                      }
+ 186   2                      else if(rx_buf[0]=='(')
+ 187   2                      {
+ 188   3                              rx_len=strlen(rx_buf);
+ 189   3                              if(rx_buf[rx_len-1]==')')
+ 190   3                              {
+ 191   4                                      i++;
+ 192   4                                      while(i<rx_len-1&&rx_buf[i]!=',')
+ 193   4                                      {
+ 194   5                                              x_tar_str[j++]=rx_buf[i++];
+ 195   5                                              if(x_tar_str[j-1]<'0'||x_tar_str[j-1]>'9')
+ 196   5                                              {
+ 197   6                                                      SendString("Error");
+ 198   6                                                      return;                                         
+ 199   6                                              }
+ 200   5                                      }
+ 201   4                                      if(rx_buf[i]!=',')
+ 202   4                                      {
+ 203   5                                              SendString("Error");
+ 204   5                                              return;
+ 205   5                                      }
+ 206   4                                      i++;
+ 207   4                                      j=0;
+ 208   4                                      while(i<rx_len-1&&rx_buf[i]!=')')
+ 209   4                                      {
+ 210   5                                              y_tar_str[j++]=rx_buf[i++];
+ 211   5                                              if(y_tar_str[j-1]<'0'||y_tar_str[j-1]>'9')
+ 212   5                                              {
+ 213   6                                                      SendString("Error");
+ 214   6                                                      return;                                         
+ 215   6                                              }
+ 216   5                                      }
+ 217   4                                      if(sped_state==State_IDLE)
+ 218   4                                      {
+ 219   5                                              x_tar=atoi(x_tar_str);
+ 220   5                                              y_tar=atoi(y_tar_str);
+ 221   5                                              SendString("Got it");
+ 222   5                                              rec_flag=1;
+ 223   5      //                                      SendData(x_tar/100);
+ 224   5      //                                      SendData(x_tar/10%10);
+ 225   5      //                                      SendData(x_tar%10);
+ 226   5      //                                      SendData(y_tar/100);
+ 227   5      //                                      SendData(y_tar/10%10);
+ 228   5      //                                      SendData(y_tar%10);
+ 229   5                                      }
+ 230   4                                      else
+ 231   4                                              SendString("Busy");
+ 232   4                              }
+ 233   3                      }
+ 234   2                      else
+ 235   2                              SendString("Error");
+ 236   2              }
+ 237   1      }
+ 238          
+ 239          void vSmg_Proc()
+ 240          {
+C51 COMPILER V9.56.0.0   MAIN                                                              04/11/2026 20:19:44 PAGE 5   
+
+ 241   1              if(Disp_mode==Disp_zb)
+ 242   1              {
+ 243   2                      if(sped_state==State_Wait||sped_state==State_RUN)
+ 244   2                      {
+ 245   3                              smg_buf[0]=0x38;
+ 246   3                              smg_buf[1]=smg_code[(x_tar>99)?(x_tar/100%10):10];
+ 247   3                              smg_buf[2]=smg_code[(x_tar>9)?(x_tar/10%10):10];
+ 248   3                              smg_buf[3]=smg_code[x_tar%10];
+ 249   3                              smg_buf[4]=0x40;
+ 250   3                              smg_buf[5]=smg_code[(y_tar>99)?(y_tar/100%10):10];
+ 251   3                              smg_buf[6]=smg_code[(y_tar>9)?(y_tar/10%10):10];
+ 252   3                              smg_buf[7]=smg_code[y_tar%10];
+ 253   3                      }
+ 254   2                      if(sped_state==State_IDLE)
+ 255   2                      {
+ 256   3                              smg_buf[0]=0x38;
+ 257   3                              smg_buf[1]=smg_code[(x_dev>99)?(x_dev/100%10):10];
+ 258   3                              smg_buf[2]=smg_code[(x_dev>9)?(x_dev/10%10):10];
+ 259   3                              smg_buf[3]=smg_code[x_dev%10];
+ 260   3                              smg_buf[4]=0x40;
+ 261   3                              smg_buf[5]=smg_code[(y_dev>99)?(y_dev/100%10):10];
+ 262   3                              smg_buf[6]=smg_code[(y_dev>9)?(y_dev/10%10):10];
+ 263   3                              smg_buf[7]=smg_code[y_dev%10];                  
+ 264   3                      }
+ 265   2              }
+ 266   1              else if(Disp_mode==Disp_sped)
+ 267   1              {
+ 268   2                      if(sped_state==State_RUN)
+ 269   2                      {
+ 270   3                              sped_dis=(u32)(sped*10); 
+ 271   3                              smg_buf[0]=0x79;
+ 272   3                              smg_buf[1]=smg_code[1];
+ 273   3                              smg_buf[2]=0x00;
+ 274   3                              smg_buf[3]=smg_code[(sped_dis>9999)?(sped_dis/10000%10):10];
+ 275   3                              smg_buf[4]=smg_code[(sped_dis>999)?(sped_dis/1000%10):10];
+ 276   3                              smg_buf[5]=smg_code[(sped_dis>99)?(sped_dis/100%10):10];
+ 277   3                              smg_buf[6]=smg_code[sped_dis/10%10]|0x80;
+ 278   3                              smg_buf[7]=smg_code[sped_dis%10];                                       
+ 279   3                      }
+ 280   2                      else if(sped_state==State_IDLE)
+ 281   2                      {
+ 282   3                              smg_buf[0]=0x79;
+ 283   3                              smg_buf[1]=smg_code[2];
+ 284   3                              smg_buf[2]=0x00;
+ 285   3                              smg_buf[3]=smg_buf[4]=smg_buf[5]=smg_buf[6]=smg_buf[7]=0x40;
+ 286   3                      }
+ 287   2                      else if(sped_state==State_Wait)
+ 288   2                      {
+ 289   3                              smg_buf[0]=0x79;
+ 290   3                              smg_buf[1]=smg_code[3];
+ 291   3                              smg_buf[2]=0x00;                        
+ 292   3                              
+ 293   3                      }
+ 294   2              }
+ 295   1              else if(Disp_mode==Disp_para)
+ 296   1              {
+ 297   2                      r_para_disp=(u8)(r_para*10);
+ 298   2                      smg_buf[0]=0x73;
+ 299   2                      smg_buf[1]=smg_buf[4]=0x00;
+ 300   2                      smg_buf[2]=smg_code[r_para_disp/10]|0x80;
+ 301   2                      smg_buf[3]=smg_code[r_para_disp%10];
+ 302   2                      if(b_para==0)
+C51 COMPILER V9.56.0.0   MAIN                                                              04/11/2026 20:19:44 PAGE 6   
+
+ 303   2                      {
+ 304   3                              smg_buf[5]=smg_buf[6]=0x00;
+ 305   3                              smg_buf[7]=smg_code[0];
+ 306   3                      }
+ 307   2                      else if(b_para>0)
+ 308   2                      {
+ 309   3                              smg_buf[5]=0x00;
+ 310   3                              smg_buf[6]=smg_code[(b_para>9)?(b_para/10):10];
+ 311   3                              smg_buf[7]=smg_code[b_para%10];
+ 312   3                      }
+ 313   2                      else
+ 314   2                      {
+ 315   3                              smg_buf[5]=smg_code[(-b_para>9)?11:10 ];
+ 316   3                              smg_buf[6]=smg_code[(-b_para>9)?(-b_para/10):11];
+ 317   3                              smg_buf[7]=smg_code[-b_para%10];                        
+ 318   3                      }
+ 319   2              }
+ 320   1      }
+ 321          
+ 322          void main()
+ 323          {
+ 324   1              System_init();
+ 325   1              Timer2_Init();
+ 326   1              vCounter0_init();
+ 327   1              Uart1_Init();
+ 328   1              
+ 329   1              while(1)
+ 330   1              {
+ 331   2                      vSmg_Proc();
+ 332   2                      vKBD_Proc();
+ 333   2                      vADC_Proc();
+ 334   2                      vSonic_Proc();
+ 335   2                      vNE555_Proc();
+ 336   2                      vUART_Proc();
+ 337   2              }
+ 338   1      }
+ 339          
+ 340          void T2_init() interrupt 12
+ 341          {
+ 342   1              Smg_Disp();
+ 343   1              cnt_kbd++;
+ 344   1              cnt_adc++;
+ 345   1              cnt_sonic++;
+ 346   1              cnt_ne555++;
+ 347   1              vRX_time_Proc();
+ 348   1              vSped_Proc();
+ 349   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   2128    ----
+   CONSTANT SIZE    =     36    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     42      12
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      3    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

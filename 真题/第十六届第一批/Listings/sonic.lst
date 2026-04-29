@@ -1,0 +1,59 @@
+C51 COMPILER V9.56.0.0   SONIC                                                             03/15/2026 13:54:45 PAGE 1   
+
+
+C51 COMPILER V9.56.0.0, COMPILATION OF MODULE SONIC
+OBJECT MODULE PLACED IN .\Objects\sonic.obj
+COMPILER INVOKED BY: D:\keil c51v956\C51\BIN\C51.EXE library\device\sonic.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\library\de
+                    -vice;.\library\system) DEBUG OBJECTEXTEND PRINT(.\Listings\sonic.lst) OBJECT(.\Objects\sonic.obj)
+
+line level    source
+
+   1          #include "sonic.h"
+   2          
+   3          void Delay12us()                //@12.000MHz
+   4          {
+   5   1              unsigned char i;
+   6   1      
+   7   1              _nop_();
+   8   1              _nop_();
+   9   1              i = 33;
+  10   1              while (--i);
+  11   1      }
+  12          
+  13          void vSend_Wave()
+  14          {
+  15   1              u8 i;
+  16   1              for(i=0;i<8;i++)
+  17   1              {
+  18   2                      P10=1;
+  19   2                      Delay12us();
+  20   2                      P10=0;
+  21   2                      Delay12us();
+  22   2              }
+  23   1      }
+  24          
+  25          u16 ucDistance_Get()
+  26          {
+  27   1              u16 dist;
+  28   1              vSend_Wave();
+  29   1              TH1=0;TL1=0;
+  30   1              TR1=1;
+  31   1              while(P11==1);
+  32   1              TR1=0;
+  33   1              dist=((TH1<<8)|TL1)*0.017;
+  34   1              return dist;
+  35   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     64    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,51 @@
+C51 COMPILER V9.56.0.0   SONIC                                                             04/11/2026 20:19:44 PAGE 1   
+
+
+C51 COMPILER V9.56.0.0, COMPILATION OF MODULE SONIC
+OBJECT MODULE PLACED IN .\Objects\sonic.obj
+COMPILER INVOKED BY: D:\keil c51v956\C51\BIN\C51.EXE library\deivce\sonic.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\library\de
+                    -ivce;.\library\system) DEBUG OBJECTEXTEND PRINT(.\Listings\sonic.lst) OBJECT(.\Objects\sonic.obj)
+
+line level    source
+
+   1          #include "sonic.h"
+   2          
+   3          void vSendwave()
+   4          {
+   5   1              u8 i,j;
+   6   1              for(i=0;i<8;i++)
+   7   1              {
+   8   2                      P10=1;
+   9   2                      for(j=0;j<25;j++)
+  10   2                              _nop_();
+  11   2                      P10=0;
+  12   2                      for(j=0;j<25;j++)
+  13   2                              _nop_();
+  14   2              }
+  15   1      }
+  16          
+  17          u16 ucDist_Get()
+  18          {
+  19   1              u16 dist_val;
+  20   1              vSendwave();
+  21   1              CH=0;CL=0;
+  22   1              CR=1;
+  23   1              while(P11==1&&CF==0);
+  24   1              CR=0;
+  25   1              dist_val=((CH<<8)|CL)*0.017;
+  26   1              return dist_val;
+  27   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     68    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

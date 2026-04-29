@@ -1,0 +1,12 @@
+".\Objects\STARTUP.obj",
+".\Objects\main.obj",
+".\Objects\timer.obj",
+".\Objects\uart.obj",
+".\Objects\p2p0.obj",
+".\Objects\smg.obj",
+".\Objects\kbd.obj",
+".\Objects\iic.obj",
+".\Objects\sonic.obj",
+".\Objects\ne555.obj" 
+TO ".\Objects\17492442" 
+PRINT(".\Listings\17492442.m51") RAMSIZE(256) 
