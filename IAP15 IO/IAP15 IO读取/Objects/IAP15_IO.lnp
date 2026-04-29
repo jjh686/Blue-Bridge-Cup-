@@ -1,0 +1,4 @@
+".\Objects\STARTUP.obj",
+".\Objects\main.obj" 
+TO ".\Objects\IAP15_IO" 
+PRINT(".\Listings\IAP15_IO.m51") RAMSIZE(256) 
